@@ -1,0 +1,7 @@
+# Large video file - already on YouTube
+demo_video.mp4
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp

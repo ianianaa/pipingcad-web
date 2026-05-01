@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="PipingCAD - Industrial-grade piping engine with micron-level precision. Analytical intersection solver, intelligent nesting, and production-ready DXF output.">
+    <meta name="keywords" content="PipingCAD, Piping Software, CNC Nesting, DXF Generator, Pipe Fabrication, Industrial CAD, Analytical Geometry">
+    <title>PipingCAD — Precision Forged. Production Ready.</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231e293b'/><path d='M25 25 L75 25 L75 75' stroke='%233b82f6' stroke-width='12' stroke-linecap='round' fill='none'/><circle cx='25' cy='25' r='8' fill='%233b82f6'/><circle cx='75' cy='75' r='8' fill='%233b82f6'/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================
+           INDUSTRIAL PRECISION THEME v5.0
+           Slate + Tech Blue, Metallic, High-Precision
+        ========================================== */
+        :root {
+            /* Slate palette */
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --slate-950: #020617;
+
+            /* Tech blue */
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-glow: rgba(59, 130, 246, 0.15);
+            --blue-glow-strong: rgba(59, 130, 246, 0.3);
+
+            /* Success */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* Spacing */
+            --max-width: 1440px;
+            --section-padding: 6rem 1.5rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-inset: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+
+            /* Dark theme - consistent dark background */
+            --bg-body: var(--slate-950);
+            --bg-section: var(--slate-900);
+            --bg-card: #1e293b;
+            --bg-card-hover: #253244;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-card: #334155;
+            --border-hover: rgba(59, 130, 246, 0.3);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-card-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            line-height: 1.65;
+            color: var(--text-secondary);
+            background: var(--bg-body);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s ease;
+        }
+
+        /* ==========================================
+           TYPOGRAPHY
+        ========================================== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        h1 { font-size: clamp(2.75rem, 5.5vw, 4.75rem); }
+        h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); }
+        h3 { font-size: 1.6rem; }
+        h4 { font-size: 1.3rem; }
+
+        p {
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        /* ==========================================
+           NAVIGATION - Enhanced with border & glow
+        ========================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.96);
+            backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: 2px solid var(--blue-500);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--slate-300);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--blue-400);
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--blue-500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--blue-600);
+            color: white;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-cta:hover {
+            background: var(--blue-700);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px var(--blue-glow);
+        }
+
+        /* Mobile toggle */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            flex-shrink: 0;
+            margin-left: 0.4rem;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        /* ==========================================
+           HERO SECTION - Precision Engineering Aesthetic
+        ========================================== */
+        .hero {
+            position: relative;
+            min-height: 95vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 8rem 1.5rem 6rem;
+        }
+
+        /* Multi-layer background: engineering grid + radial glows */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                /* Micro grid (20px) */
+                linear-gradient(to right, rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px),
+                /* Macro grid (100px) */
+                linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px),
+                /* Radial glows */
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+                /* Base gradient */
+                linear-gradient(135deg, var(--slate-950) 0%, var(--slate-900) 50%, var(--slate-800) 100%);
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px, 100% 100%, 100% 100%, 100% 100%;
+            background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+            z-index: 0;
+        }
+
+        /* Animated scanline */
+        .hero-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--blue-500), transparent);
+            opacity: 0.3;
+            animation: scan 8s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 1000px;
+            color: white;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: var(--blue-400);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: white;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.4s;
+        }
+
+        .hero-title .highlight {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--blue-400) 0%, var(--blue-600) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .hero-title .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--blue-500);
+            opacity: 0.3;
+            border-radius: 2px;
+        }
+
+        .hero-slogan {
+            font-size: clamp(1.15rem, 2vw, 1.5rem);
+            font-weight: 400;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.6s;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-disabled {
+            background: var(--slate-700);
+            color: var(--slate-400);
+            cursor: default;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-primary {
+            background: var(--blue-600);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-700);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==========================================
+           SECTIONS COMMON
+        ========================================== */
+        .section {
+            padding: var(--section-padding);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .section-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-label {
+            display: inline-block;
+            color: var(--blue-400);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2.25rem, 4vw, 3rem);
+            margin-bottom: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ==========================================
+           PROBLEM SECTION
+        ========================================== */
+        .section-problem {
+            background: linear-gradient(180deg, var(--slate-900) 0%, var(--slate-950) 100%);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s ease;
+            border: 1px solid var(--border-card);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .problem-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }

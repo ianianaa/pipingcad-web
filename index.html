@@ -1,0 +1,3003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="PipingCAD - Industrial-grade piping engine with micron-level precision. Analytical intersection solver, intelligent nesting, and production-ready DXF output.">
+    <meta name="keywords" content="PipingCAD, Piping Software, CNC Nesting, DXF Generator, Pipe Fabrication, Industrial CAD, Analytical Geometry">
+    <title>PipingCAD — Precision Forged. Production Ready.</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231e293b'/><path d='M25 25 L75 25 L75 75' stroke='%233b82f6' stroke-width='12' stroke-linecap='round' fill='none'/><circle cx='25' cy='25' r='8' fill='%233b82f6'/><circle cx='75' cy='75' r='8' fill='%233b82f6'/></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================
+           INDUSTRIAL PRECISION THEME v5.0
+           Slate + Tech Blue, Metallic, High-Precision
+        ========================================== */
+        :root {
+            /* Slate palette */
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --slate-950: #020617;
+
+            /* Tech blue */
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-glow: rgba(59, 130, 246, 0.15);
+            --blue-glow-strong: rgba(59, 130, 246, 0.3);
+
+            /* Success */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* Spacing */
+            --max-width: 1440px;
+            --section-padding: 6rem 1.5rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-inset: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+
+            /* Dark theme - consistent dark background */
+            --bg-body: var(--slate-950);
+            --bg-section: var(--slate-900);
+            --bg-card: #1e293b;
+            --bg-card-hover: #253244;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-card: #334155;
+            --border-hover: rgba(59, 130, 246, 0.3);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-card-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            line-height: 1.65;
+            color: var(--text-secondary);
+            background: var(--bg-body);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s ease;
+        }
+
+        /* ==========================================
+           TYPOGRAPHY
+        ========================================== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        h1 { font-size: clamp(2.75rem, 5.5vw, 4.75rem); }
+        h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); }
+        h3 { font-size: 1.6rem; }
+        h4 { font-size: 1.3rem; }
+
+        p {
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        /* ==========================================
+           NAVIGATION - Enhanced with border & glow
+        ========================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.96);
+            backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: 2px solid var(--blue-500);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--slate-300);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--blue-400);
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--blue-500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--blue-600);
+            color: white;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-cta:hover {
+            background: var(--blue-700);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px var(--blue-glow);
+        }
+
+        /* Mobile toggle */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            flex-shrink: 0;
+            margin-left: 0.4rem;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-toggle span {
+            width: 18px;
+            height: 2px;
+            background: var(--slate-300);
+            transition: all 0.3s;
+        }
+
+        /* ==========================================
+           HERO SECTION - Precision Engineering Aesthetic
+        ========================================== */
+        .hero {
+            position: relative;
+            min-height: 95vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 8rem 1.5rem 6rem;
+        }
+
+        /* Multi-layer background: engineering grid + radial glows */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                /* Micro grid (20px) */
+                linear-gradient(to right, rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px),
+                /* Macro grid (100px) */
+                linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px),
+                /* Radial glows */
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+                /* Base gradient */
+                linear-gradient(135deg, var(--slate-950) 0%, var(--slate-900) 50%, var(--slate-800) 100%);
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px, 100% 100%, 100% 100%, 100% 100%;
+            background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+            z-index: 0;
+        }
+
+        /* Animated scanline */
+        .hero-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--blue-500), transparent);
+            opacity: 0.3;
+            animation: scan 8s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 1000px;
+            color: white;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: var(--blue-400);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: white;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.4s;
+        }
+
+        .hero-title .highlight {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--blue-400) 0%, var(--blue-600) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .hero-title .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--blue-500);
+            opacity: 0.3;
+            border-radius: 2px;
+        }
+
+        .hero-slogan {
+            font-size: clamp(1.15rem, 2vw, 1.5rem);
+            font-weight: 400;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.6s;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-disabled {
+            background: var(--slate-700);
+            color: var(--slate-400);
+            cursor: default;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-primary {
+            background: var(--blue-600);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-700);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==========================================
+           SECTIONS COMMON
+        ========================================== */
+        .section {
+            padding: var(--section-padding);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .section-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-label {
+            display: inline-block;
+            color: var(--blue-400);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2.25rem, 4vw, 3rem);
+            margin-bottom: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ==========================================
+           PROBLEM SECTION
+        ========================================== */
+        .section-problem {
+            background: linear-gradient(180deg, var(--slate-900) 0%, var(--slate-950) 100%);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s ease;
+            border: 1px solid var(--border-card);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .problem-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==========================================
+           SOLUTION SECTION
+        ========================================== */
+        .solution-section {
+            background: var(--bg-section);
+        }
+
+        .solution-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 14px;
+            border: 1px solid var(--border-card);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .step-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .step-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--blue-500);
+            min-width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .step-content h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ==========================================
+           FITTING TYPES GRID
+        ========================================== */
+        .fitting-types {
+            background: var(--bg-section);
+        }
+        .fitting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .fitting-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 0;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: default;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+        .fitting-card:hover {
+            border-color: var(--blue-200);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+        .fitting-card .fit-icon {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-500);
+        }
+        .fitting-card h4 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        .fitting-card p {
+            font-size: 0.72rem;
+            color: var(--slate-400);
+            line-height: 1.3;
+        }
+        .eye-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--slate-600);
+            background: transparent;
+            color: var(--slate-300);
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+        .eye-btn:hover {
+            border-color: var(--blue-400);
+            color: white;
+            background: rgba(59,130,246,0.15);
+        }
+        .eye-btn svg { width: 16px; height: 16px; }
+
+        .fitting-card .flipper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .fitting-card .flipper.flipped {
+            transform: rotateY(180deg);
+        }
+        .fitting-card .flipper-front, .fitting-card .flipper-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .fitting-card .flipper-back {
+            transform: rotateY(180deg);
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .fitting-card .flipper-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .fitting-card .flipper-front {
+            position: absolute;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ==========================================
+           LANGUAGE SWITCHER
+        ========================================== */
+        .lang-switcher { position: relative; display: inline-flex; align-items: center; gap: 0.35rem; z-index: 100; }
+        .lang-current { background: transparent; border: 1px solid var(--border-card); color: white; font-size: 0.75rem; font-weight: 600; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: inherit; transition: border-color 0.2s; }
+        .lang-current:hover { border-color: var(--blue-500); }
+        .lang-dropdown { position: absolute; top: 100%; right: 0; left: auto; margin-top: 4px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 8px; padding: 0.25rem; min-width: 140px; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: all 0.2s ease; box-shadow: var(--shadow-lg); }
+        .lang-switcher.open .lang-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+        .lang-dropdown button { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--slate-300); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+        .lang-dropdown button:hover { background: var(--blue-glow); color: var(--blue-400); }
+        .lang-dropdown button.active-lang { color: white; background: var(--blue-600); }
+
+        /* ==========================================
+           FEATURES, INSTANT GEN, BEND DEMO, NESTING, ETC
+        ========================================== */
+        .features { background: var(--bg-section); }
+        section[id] { scroll-margin-top: 80px; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .feature-card { background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-card); padding: 2rem; transition: all 0.4s ease; opacity: 0; transform: translateY(20px); }
+        .feature-card.visible { opacity: 1; transform: translateY(0); }
+        .feature-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow-card-lg); }
+        .feature-icon { width: 48px; height: 48px; background: var(--blue-glow); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; color: var(--blue-500); }
+        .feature-card h3 { color: var(--text-primary); font-size: 1rem; margin-bottom: 0.75rem; }
+        .feature-card p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+
+        .demo-interactive { background: var(--bg-body); }
+        .demo-interactive-container { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; align-items: center; }
+        .demo-bend-wrap { display: flex; flex-direction: row; align-items: stretch; justify-content: center; margin: 0 auto; max-width: 800px; position: relative; }
+        .demo-bend-images { flex: 0 0 85%; width: 85%; display: flex; flex-direction: row; align-items: stretch; justify-content: flex-start; gap: 0; }
+        .demo-bend-images .img-box { background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-card); padding: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; flex: 0 0 68%; height: auto; }
+        .demo-bend-images .img-box img { display: block; width: 100%; height: auto; }
+        .demo-bend-slider { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; position: absolute; right: 0; top: 0; bottom: 0; width: 30%; padding: 0; }
+        .demo-bend-track-wrap { position: relative; flex: 1; width: 50%; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .demo-bend-track-line { position: absolute; left: 50%; transform: translateX(-50%); top: 24px; bottom: 24px; width: 4px; background: var(--border-card); border-radius: 3px; pointer-events: none; z-index: 1; }
+        .demo-bend-track-fill { position: absolute; left: 50%; transform: translateX(-50%); bottom: 24px; width: 4px; background: linear-gradient(to top, var(--blue-500), var(--blue-400)); border-radius: 3px; pointer-events: none; z-index: 2; transition: height 0.15s ease-out; }
+        .bend-dots { position: absolute; left: 50%; transform: translateX(-50%); top: 24px; bottom: 24px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; z-index: 3; }
+        .bend-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--bg-body); border: 2.5px solid var(--border-card); flex-shrink: 0; box-sizing: border-box; transition: background 0.2s, border-color 0.2s, box-shadow 0.2s; pointer-events: auto; cursor: pointer; }
+        .bend-dot.active { background: var(--blue-500); border-color: var(--blue-500); box-shadow: 0 0 8px rgba(59,130,246,0.5); }
+        .bend-dot.passed { background: var(--blue-500); border-color: var(--blue-500); }
+        .bend-thumb { position: absolute; left: 50%; transform: translate(-50%, 50%); width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 4px solid var(--blue-500); box-shadow: 0 2px 10px rgba(59,130,246,0.4); pointer-events: none; z-index: 5; transition: bottom 0.15s ease-out; }
+        .demo-bend-nums { display: flex; flex-direction: column-reverse; justify-content: space-between; align-items: flex-start; padding: 0; color: var(--text-muted); font-weight: 600; font-size: 0.72rem; font-family: var(--font-mono); pointer-events: none; position: absolute; left: 0; top: 24px; bottom: 24px; z-index: 4; }
+        .demo-bend-nums span { line-height: 1.2; cursor: pointer; pointer-events: auto; transition: all 0.2s; background: var(--slate-800); border: 1px solid var(--border-card); border-radius: 8px; padding: 3px 10px; position: relative; white-space: nowrap; font-size: 0.75rem; font-weight: 600; }
+        .demo-bend-nums span::after { content: ''; position: absolute; right: -7px; top: 50%; transform: translateY(-50%); border-left: 7px solid var(--border-card); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+        .demo-bend-nums span.active { color: white; background: var(--blue-600); border-color: var(--blue-500); box-shadow: 0 0 10px rgba(59,130,246,0.3); }
+        .demo-bend-nums span.active::after { border-left-color: var(--blue-500); }
+        .demo-bend-nums span.hint-glow {
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
+            border-color: var(--blue-400);
+            box-shadow: 0 0 20px rgba(59,130,246,0.4);
+            animation: hintPulse 2s ease-in-out infinite;
+            margin-left: -60px;
+            padding: 3px 14px 3px 14px;
+            position: relative;
+            z-index: 20;
+        }
+        .demo-bend-nums span.hint-glow::after {
+            display: none;
+        }
+        @keyframes hintPulse {
+            0%, 100% { box-shadow: 0 0 12px rgba(59,130,246,0.3); }
+            50% { box-shadow: 0 0 24px rgba(59,130,246,0.6); }
+        }
+        #bend-range { -webkit-appearance: none; appearance: none; position: absolute; top: 50%; left: 50%; width: 400px; height: 70px; margin: 0; opacity: 0; cursor: pointer; z-index: 10; transform: translate(-50%, -50%) rotate(-90deg); touch-action: none; }
+        .demo-bend-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; color: var(--text-muted); text-transform: uppercase; text-align: center; display: block; margin-top: 0.5rem; }
+        @media (max-width: 768px) {
+            .demo-bend-wrap { width: 100%; }
+            .demo-bend-images { flex-direction: row; align-items: stretch; min-height: 450px; width: auto; flex: 1; }
+            .demo-bend-images .img-box { width: 80%; flex: 0 0 auto; height: 100%; }
+            .demo-bend-slider { position: absolute; right: 0; top: 0; bottom: 0; width: 35%; align-items: flex-end; }
+            .demo-bend-track-wrap { min-height: auto; height: 100%; width: 50%; }
+            .demo-bend-track-line { top: 24px; bottom: 24px; width: 4px; }
+            .demo-bend-track-fill { bottom: 24px; width: 4px; }
+            .bend-dots { top: 24px; bottom: 24px; }
+            .bend-thumb { width: 18px; height: 18px; border-width: 3px; }
+            .demo-bend-nums { top: 24px; bottom: 24px; left: 0; right: auto; }
+            #bend-range { display: block; width: calc(100vh - 100px); height: 70px; position: absolute; top: 50%; left: 50%; opacity: 0; transform: translate(-50%, -50%) rotate(-90deg); margin: 0; touch-action: none; }
+            .demo-bend-label { margin-top: 0; }
+        }
+
+        .nesting { background: var(--slate-900); color: white; position: relative; overflow: hidden; }
+        .nesting-visual { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid var(--slate-700); max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+        .nesting-visual img { width: 100%; display: block; }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--blue-400); box-shadow: 0 0 15px var(--blue-400); animation: scan 3s linear infinite; }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        .batch-arrow { padding: 0.6rem 0; }
+        .batch-arrow svg { display: block; width: 28px; height: 28px; }
+
+        .pricing { background: var(--bg-section); }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+        .pricing-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 16px; padding: 2.5rem 2rem; text-align: center; transition: all 0.3s ease; position: relative; }
+        .pricing-card:hover { border-color: var(--blue-500); box-shadow: 0 0 20px var(--blue-glow); transform: translateY(-4px); }
+        .popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--blue-600); color: white; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 1rem; border-radius: 20px; }
+        .pricing-price { font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin: 1.5rem 0; }
+        .pricing-price span { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
+        .pricing-features { list-style: none; text-align: left; margin: 1.5rem 0; }
+        .pricing-features li { padding: 0.5rem 0; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: flex-start; gap: 0.5rem; }
+        .pricing-features li::before { content: "✓"; color: var(--success); font-weight: 700; flex-shrink: 0; }
+        .pricing-card .btn { width: 100%; justify-content: center; }
+
+        .faq { background: var(--bg-body); }
+        .faq-grid { display: grid; gap: 1rem; max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; overflow: hidden; }
+        .faq-question { width: 100%; text-align: left; padding: 1.25rem 1.5rem; background: none; border: none; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: inherit; }
+        .faq-question::after { content: "+"; font-size: 1.2rem; color: var(--blue-500); transition: transform 0.3s ease; }
+        .faq-item.open .faq-question::after { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+        .faq-item.open .faq-answer { max-height: 300px; padding: 0 1.5rem 1.25rem; }
+        .faq-answer p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65; }
+
+        .contact { background: var(--bg-section); }
+        .contact-form { max-width: 600px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 16px; padding: 2.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem 1rem; background: var(--slate-900); border: 1px solid var(--border-card); border-radius: 8px; font-size: 0.9rem; color: var(--text-primary); font-family: inherit; }
+
+        .footer { background: var(--slate-950); border-top: 1px solid var(--border-card); padding: 4rem 1.5rem 2rem; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: var(--max-width); margin: 0 auto 3rem; }
+        .footer-brand .logo-text { font-size: 1.2rem; color: var(--text-primary); }
+        .footer-col h4 { font-size: 0.8rem; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .footer-col a { display: block; padding: 0.35rem 0; font-size: 0.85rem; color: var(--text-muted); transition: color 0.2s; }
+        .footer-col a:hover { color: var(--blue-400); }
+        .footer-bottom { border-top: 1px solid var(--border-card); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; max-width: var(--max-width); margin: 0 auto; font-size: 0.8rem; color: var(--text-muted); }
+
+        @media (max-width: 900px) {
+            .instant-gen-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--slate-950); flex-direction: column; padding: 1rem; border-bottom: 1px solid var(--border-card); }
+            .nav-links.open { display: flex; }
+            .nav-toggle { display: flex; }
+            .fitting-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+        .img-frame { position: relative; border: 1px solid var(--border-card); border-radius: 12px; overflow: hidden; max-width: 860px; width: 100%; }
+        .corner-tl, .corner-br { position: absolute; width: 24px; height: 24px; border: 2px solid var(--blue-500); z-index: 2; pointer-events: none; }
+        .corner-tl { top: 8px; left: 8px; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
+        .corner-br { bottom: 8px; right: 8px; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
+        .frame-content { position: relative; z-index: 1; }
+        .pdf-showcase {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .pdf-image { width: 100%; }
+        .pdf-screenshot {
+            width: 100%;
+            border-radius: 14px;
+            display: block;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+        @media (max-width: 768px) {
+            .pdf-showcase { max-width: 100%; }
+        }
+        /* Demo video - YouTube embed */
+        .demo-video-embed {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16 / 9;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-card);
+            background: #000;
+        }
+        .demo-video-embed iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .demo-video-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="8" fill="#1e293b"/><path d="M9 9 L27 9 L27 27" stroke="#3b82f6" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="9" cy="9" r="3" fill="#3b82f6"/><circle cx="27" cy="27" r="3" fill="#3b82f6"/></svg>
+                PipingCAD
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features" data-i18n="nav_features">Features</a></li>
+                <li><a href="#demo-interactive" data-i18n="nav_bend_demo">Bend Demo</a></li>
+                <li><a href="#pricing" data-i18n="nav_pricing">Pricing</a></li>
+                <li><a href="#faq" data-i18n="nav_faq">FAQ</a></li>
+                <li><a href="mailto:zhao.industrial.auto@gmail.com" data-i18n="nav_contact">Contact</a></li>
+            </ul>
+            <div style="display:flex;align-items:center;gap:0.75rem">
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-current" id="langCurrent"><span id="langLabel">EN</span></button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <button data-lang="en" class="active-lang">English</button>
+                        <button data-lang="zh">中文</button>
+                        <button data-lang="de">Deutsch</button>
+                        <button data-lang="fr">Français</button>
+                        <button data-lang="es">Español</button>
+                        <button data-lang="ru">Русский</button>
+                        <button data-lang="ja">日本語</button>
+                    </div>
+                </div>
+                <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-scanline"></div>
+        <div class="hero-content">
+            <div class="hero-badge" data-i18n="hero_badge">⚙ Industrial-Grade Piping Engine</div>
+            <h1 class="hero-title"><span class="highlight" data-i18n="hero_highlight">Precision Forged.</span><br><span data-i18n="hero_subtitle">Production Ready.</span></h1>
+            <p class="hero-slogan" data-i18n="hero_slogan">From pipe parameters to cut-ready DXF in seconds. Analytical intersection solver · Intelligent nesting · Production-ready output.</p>
+            <div class="hero-buttons">
+                <a href="mailto:zhao.industrial.auto@gmail.com?subject=Free%20Trial%20-%20PipingCAD" class="btn btn-primary" data-i18n="hero_cta_trial">Get Free Trial →</a>
+                <a href="#demo-interactive" class="btn btn-secondary" data-i18n="hero_cta_demo">Interactive Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="section section-problem" id="problem">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="problem_label">The Problem</span>
+            <h2 class="section-title" data-i18n="problem_title">Manual Piping Design Is Killing Your Margins</h2>
+            <p class="section-subtitle" data-i18n="problem_subtitle">Fabrication shops lose thousands per project to manual calculations, trial-and-error fitting, and expensive enterprise software.</p>
+        </div>
+        <div class="problem-grid">
+            <div class="problem-card reveal delay-1">
+                <div class="problem-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <h3 data-i18n="problem_hours">Hours of Manual Work</h3>
+                <p data-i18n="problem_hours_desc">Engineers spend 4-8 hours per project manually calculating expansions, intersections, and creating drawings.</p>
+            </div>
+            <div class="problem-card reveal delay-3">
+                <div class="problem-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="0.6"/></svg></div>
+                <h3 data-i18n="problem_errors">Costly Fitment Errors</h3>
+                <p data-i18n="problem_errors_desc">Manual calculations aren't perfect. Field fit issues cost $5,000-$50,000 per incident in rework and delays.</p>
+            </div>
+            <div class="problem-card reveal delay-4">
+                <div class="problem-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+                <h3 data-i18n="problem_software">Expensive Enterprise Software</h3>
+                <p data-i18n="problem_software_desc">CAD packages like AutoCAD Plant 3D cost $10,000+/year. Overkill for pipe-only work with steep learning curves.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION SECTION -->
+    <section class="section solution-section" id="solution">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="solution_label">The Solution</span>
+            <h2 class="section-title" data-i18n="solution_title">From Parameters to Production in Minutes</h2>
+            <p class="section-subtitle" data-i18n="solution_subtitle">PipingCAD automates the entire pipeline — from pipe specification to nesting, G-code, cost reports, and production-ready DXF files.</p>
+        </div>
+        <div class="solution-steps">
+            <div class="step-card reveal delay-1">
+                <div class="step-number">1</div>
+                <div class="step-content"><h3 data-i18n="solution_step1">Enter Pipe Parameters</h3><p data-i18n="solution_step1_desc">Specify diameter, thickness, bend radius, material, and welding standards. Our intelligent engine handles the complex geometry.</p></div>
+            </div>
+            <div class="step-card reveal delay-2">
+                <div class="step-number">2</div>
+                <div class="step-content"><h3 data-i18n="solution_step2">Analytical Calculation</h3><p data-i18n="solution_step2_desc">Our proprietary solvers compute precise 3D models, intersection curves, and flat patterns using exact mathematical methods.</p></div>
+            </div>
+            <div class="step-card reveal delay-3">
+                <div class="step-number">3</div>
+                <div class="step-content"><h3 data-i18n="solution_step3">Production-Ready Output</h3><p data-i18n="solution_step3_desc">Get DXF files with embedded QR codes, cutting lists, and cost reports. Ready for your CNC machines.</p></div>
+            </div>
+        </div>
+    </section>
+    <!-- FITTING TYPES -->
+    <section class="section fitting-types" id="fitting-types">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="fitting_types">Supported Fittings</span>
+            <h2 class="section-title" data-i18n="fitting_types_title">13 Fitting Types</h2>
+            <p class="section-subtitle" data-i18n="fitting_subtitle">All standard pipe fitting geometries pre-configured. From straight pipes to complex Y-Branches and Square-to-Round transitions.</p>
+        </div>
+        <div class="fitting-grid">
+            <div class="fitting-card reveal delay-1">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 18 Q5 5 18 5"/></svg></div>
+                        <h4 data-i18n="fit_1_name">Standard Elbow</h4>
+                        <p data-i18n="fit_1_desc">Multi-segment mitered - Configurable R, angle, segment count</p>
+                        <button class="eye-btn" data-fit="1" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-1">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M 4 16 A 8 8 0 0 1 12 8 A 8 8 0 0 0 20 16"/></svg></div>
+                        <h4 data-i18n="fit_1b_name">Double Eccentric Elbow</h4>
+                        <p data-i18n="fit_1b_desc">Elbow with two different bend radii - variable wall thickness</p>
+                        <button class="eye-btn" data-fit="1b" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="1b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-1">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M12 4 L12 20 M12 12 L18 6"/></svg></div>
+                        <h4 data-i18n="fit_2_name">Tee</h4>
+                        <p data-i18n="fit_2_desc">Main + branch pipe intersection - Configurable branch angle</p>
+                        <button class="eye-btn" data-fit="2" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-2">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"><path d="M6 4 L18 4 L14 20 L10 20 Z"/></svg></div>
+                        <h4 data-i18n="fit_3_name">Concentric Cone</h4>
+                        <p data-i18n="fit_3_desc">Concentric reducer with variable taper ratio</p>
+                        <button class="eye-btn" data-fit="3" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-3">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"><path d="M4 4 L16 4 L18 20 L8 20 Z"/></svg></div>
+                        <h4 data-i18n="fit_4_name">Eccentric Cone</h4>
+                        <p data-i18n="fit_4_desc">Eccentric reducer with offset centerline</p>
+                        <button class="eye-btn" data-fit="4" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-3">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="5"/></svg></div>
+                        <h4 data-i18n="fit_5_name">Square-to-Round</h4>
+                        <p data-i18n="fit_5_desc">Rectangular to circular transition duct</p>
+                        <button class="eye-btn" data-fit="5" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-4">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M12 21 L12 11 M12 11 L5 3 M12 11 L19 3"/></svg></div>
+                        <h4 data-i18n="fit_6_name">Y-Branch</h4>
+                        <p data-i18n="fit_6_desc">Two legs at configurable angle off main pipe</p>
+                        <button class="eye-btn" data-fit="6" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-5">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M8 4 L8 20 M16 4 L16 20 M8 4 L16 4 M8 20 L16 20"/></svg></div>
+                        <h4 data-i18n="fit_8_name">Pipe (Straight)</h4>
+                        <p data-i18n="fit_8_desc">Straight pipe section with configurable length and wall</p>
+                        <button class="eye-btn" data-fit="8" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-5">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><ellipse cx="12" cy="12" rx="8" ry="5.5"/></svg></div>
+                        <h4 data-i18n="fit_9_name">Flat Oval</h4>
+                        <p data-i18n="fit_9_desc">Oval cross-section pipe for ventilation and ducting</p>
+                        <button class="eye-btn" data-fit="9" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-6">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3.5" width="12" height="17" rx="1.5"/></svg></div>
+                        <h4 data-i18n="fit_10_name">Rectangular Pipe</h4>
+                        <p data-i18n="fit_10_desc">Square/rectangular duct with configurable dimensions</p>
+                        <button class="eye-btn" data-fit="10" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-6">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4 L10 4 L16 10 L16 16"/></svg></div>
+                        <h4 data-i18n="fit_11_name">Rectangular Elbow</h4>
+                        <p data-i18n="fit_11_desc">Square/rectangular duct elbow - Configurable angle 0-180</p>
+                        <button class="eye-btn" data-fit="11" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="11"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+            <div class="fitting-card reveal delay-6">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M8 20 C8 17 12 17 12 15 C12 13 8 13 8 11 C8 9 12 9 12 7 C12 5 8 5 8 3"/><path d="M11 20 C11 17 15 17 15 15 C15 13 11 13 11 11 C11 9 15 9 15 7 C15 5 11 5 11 3" stroke-opacity="0.3"/></svg></div>
+                        <h4 data-i18n="fit_12_name">Screw Flight</h4>
+                        <p data-i18n="fit_12_desc">Helical auger blade with optional liner</p>
+                        <button class="eye-btn" data-fit="12" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="12"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+        <!-- Flange -->
+            <div class="fitting-card reveal delay-4">
+                <div class="flipper">
+                    <div class="flipper-front">
+                        <div class="fit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="5" r="1.8" fill="currentColor"/><circle cx="12" cy="19" r="1.8" fill="currentColor"/><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></div>
+                        <h4 data-i18n="fit_7_name">Flange</h4>
+                        <p data-i18n="fit_7_desc">Circular flange with bolt holes - Configurable PN rating</p>
+                        <button class="eye-btn" data-fit="7" aria-label="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="flipper-back" data-fit="7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- FEATURES SECTION -->
+    <section class="section features" id="features">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="features_label">Capabilities</span>
+            <h2 class="section-title" data-i18n="features_title">Built for Industrial Precision</h2>
+            <p class="section-subtitle" data-i18n="features_subtitle">Every feature designed to reduce waste, eliminate errors, and speed production.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal delay-1">
+                <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+                <h3 data-i18n="feature_library">Parametric Library</h3>
+                <p data-i18n="feature_library_desc">Full ISO/ANSI standard parts: elbows, tees, cones, flanges, Y-branches, and custom fittings with instant parameterization.</p>
+            </div>
+            <div class="feature-card reveal delay-2">
+                <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                <h3 data-i18n="feature_intersections">Analytical Intersections</h3>
+                <p data-i18n="feature_intersections_desc">Exact mathematical solutions for pipe intersections. No approximations. Micron-level precision ensures perfect fit.</p>
+            </div>
+            <div class="feature-card reveal delay-3">
+                <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+                <h3 data-i18n="feature_nesting">Intelligent Nesting</h3>
+                <p data-i18n="feature_nesting_desc">Shapely-powered optimization maximizes sheet utilization. Typical savings: 15-25% reduction in material costs.</p>
+            </div>
+            <div class="feature-card reveal delay-4">
+                <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><polyline points="16 16 12 12 8 16"/></svg></div>
+                <h3 data-i18n="feature_export">DXF + CNC G-Code Export</h3>
+                <p data-i18n="feature_export_desc">Export production-ready DXF with multi-layer output. Also generates CNC G-code for Fanuc, Amada, and Trumpf controllers.</p>
+            </div>
+            <div class="feature-card reveal delay-5">
+                <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <h3 data-i18n="feature_costing">Costing Engine</h3>
+                <p data-i18n="feature_costing_desc">Full cost breakdown per part: material cost, laser cutting, bending, welding, profit margin, and VAT. Auto-generates PDF invoices with 3D screenshots.</p>
+            </div>
+            <div class="feature-card reveal delay-6">
+                <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                <h3 data-i18n="feature_standards">Standards Database and Batch Processing</h3>
+                <p data-i18n="feature_standards_desc">Built-in ASME/EN pipe standards database. Batch task queue with priority levels, retry logic, and CLI mode for headless automation.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- INTERACTIVE BEND DEMO -->
+    <section class="section demo-interactive" id="demo-interactive">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="demo_bend_label">Interactive Bend Demo</span>
+            <h2 class="section-title" data-i18n="demo_bend_title">Parametric Demo: Adjust Any Parameter Instantly</h2>
+            <p class="section-subtitle" data-i18n="demo_bend_subtitle">Every parameter is fully adjustable - segment count, bend radius, wall thickness, angle, and material. Try one example below.</p>
+        </div>
+        <div class="demo-interactive-container reveal">
+            <div class="demo-bend-wrap">
+                <div class="demo-bend-images">
+                    <div class="img-box">
+                        <img id="demo-img-3d" src="5a.png" alt="3D model" loading="eager">
+                        <img id="demo-img-flat" src="5b.png" alt="Flat pattern" loading="eager">
+                    </div>
+                    <div class="demo-bend-slider">
+                        <div class="demo-bend-track-wrap" id="bendTrackWrap">
+                            <div class="demo-bend-track-line"></div>
+                            <div class="demo-bend-track-fill" id="bendTrackFill"></div>
+                            <div class="bend-dots">
+                                <span class="bend-dot" data-val="8"></span>
+                                <span class="bend-dot" data-val="7"></span>
+                                <span class="bend-dot" data-val="6"></span>
+                                <span class="bend-dot" data-val="5"></span>
+                                <span class="bend-dot" data-val="4"></span>
+                                <span class="bend-dot" data-val="3"></span>
+                            </div>
+                            <div class="bend-thumb" id="bendThumb"></div>
+                            <div class="demo-bend-nums" id="bendNums">
+                                <span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+                            </div>
+                            <input type="range" id="bend-range" min="3" max="8" value="5" step="1">
+                        </div>
+                        <span class="demo-bend-label" data-i18n="demo_bend_segments">SEGMENTS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NESTING SECTION -->
+    <section class="section nesting" id="nesting">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="nesting_label">Intelligent Nesting</span>
+            <h2 class="section-title" data-i18n="nesting_title">Intelligent Irregular Nesting: Every Inch of Steel Counts</h2>
+            <p class="section-subtitle" data-i18n="nesting_subtitle">Four optimization strategies powered by genetic algorithms. Auto-rotation at 0/90/180/270. Typical savings: 15-25% material utilization improvement.</p>
+        </div>
+        <div class="nesting-visual reveal">
+            <div class="nesting-grid"></div>
+            <div class="scan-line"></div>
+            <div class="utilization-badge" id="utilBadge" data-i18n="nesting_utilization">15-25% Material Savings</div>
+            <div class="img-frame"><div class="corner-tl"></div><div class="corner-br"></div><div class="frame-content batch-img"><img src="table_data.png" alt="Batch Processing Table"></div></div>
+            <div class="batch-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="var(--slate-500)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="17 17 12 22 7 17"/></svg></div>
+            <div class="img-frame"><div class="corner-tl"></div><div class="corner-br"></div><div class="frame-content batch-img"><img src="layout_preview.png" alt="Nesting Layout"></div></div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD SECTION -->
+    <section class="section" id="pdf-report" style="background:var(--bg-body)">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="dashboard_label">Production Reports and Digital DNA</span>
+            <h2 class="section-title" data-i18n="pdf_title">PDF Production Report + QR Code</h2>
+            <p class="section-subtitle" data-i18n="dashboard_subtitle">Every DXF carries complete Production Reports and Digital DNA - scan the QR code to access all process information.</p>
+        </div>
+        <div class="pdf-showcase">
+            <div class="pdf-image reveal">
+                <img src="pdf_demo.png" alt="PDF Production Report Preview" class="pdf-screenshot">
+            </div>
+        </div>
+    </section>
+    <!-- DEMO VIDEO SECTION -->
+    <section class="section demo-section" id="demo">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="demo_label">See It In Action</span>
+            <h2 class="section-title" data-i18n="demo_title">Watch PipingCAD Transform Your Workflow</h2>
+            <p class="section-subtitle" data-i18n="demo_subtitle">See how quickly you can go from pipe specification to production-ready DXF files.</p>
+        </div>
+        <div class="demo-video-wrapper reveal">
+            <div class="demo-video-embed">
+                <iframe src="https://www.youtube.com/embed/RnYCw89PD6Y"
+                        title="PipingCAD Demo"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section class="section pricing" id="pricing">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="pricing_label">Pricing</span>
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <p class="section-subtitle pricing-subtitle" data-i18n="pricing_subtitle">Start free, scale as you grow. No hidden fees.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card reveal delay-1">
+                <h3 data-i18n="pricing_trial_title">Mini</h3>
+                <p class="pricing-subtitle" data-i18n="pricing_trial_subtitle">Essential 6 fittings</p>
+                <div class="pricing-price">¥999<span data-i18n="pricing_trial_price">/year</span></div>
+                <ul class="pricing-features">
+                    <li data-i18n="pricing_trial_feat1">6 core fitting types: elbow, tee, cone, Y-branch, flange, pipe</li>
+                    <li data-i18n="pricing_trial_feat2">Full parameter adjustment for all types</li>
+                    <li data-i18n="pricing_trial_feat3">3D preview + 2D flat view</li>
+                    <li data-i18n="pricing_trial_feat4">DXF export, no watermark</li>
+                    <li data-i18n="pricing_trial_feat5">Basic cost estimation</li>
+                </ul>
+                <a href="#contact" class="btn btn-secondary" data-i18n="pricing_trial_cta">Buy Mini</a>
+            </div>
+            <div class="pricing-card reveal delay-2">
+                <span class="popular-badge" data-i18n="pricing_popular_badge">Most Popular</span>
+                <h3 data-i18n="pricing_professional_title">Professional</h3>
+                <p class="pricing-subtitle" data-i18n="pricing_professional_subtitle">For fabrication shops and engineers</p>
+                <div class="pricing-price">$2,499<span data-i18n="pricing_professional_period">/year</span></div>
+                <p class="pricing-monthly" data-i18n="pricing_professional_monthly">or $499/month</p>
+                <ul class="pricing-features">
+                    <li data-i18n="pricing_professional_feat1">Unlimited parts generation</li>
+                    <li data-i18n="pricing_professional_feat2">All 13 fitting types, full parameters</li>
+                    <li data-i18n="pricing_professional_feat3">Smart nesting optimizer (4 GA strategies)</li>
+                    <li data-i18n="pricing_professional_feat4">Watermark-free DXF + STEP export</li>
+                    <li data-i18n="pricing_professional_feat5">PDF report + QR/DNA embedding</li>
+                    <li data-i18n="pricing_professional_feat6">Full cost estimation, itemized quotes</li>
+                    <li data-i18n="pricing_professional_feat7">Batch processing queue</li>
+                    <li data-i18n="pricing_professional_feat8">Priority email support</li>
+                    <li data-i18n="pricing_professional_feat9">1 year of updates</li>
+                </ul>
+                <a href="#contact" class="btn btn-primary" data-i18n="pricing_professional_cta">Buy Professional</a>
+                <a href="mailto:zhao.industrial.auto@gmail.com?subject=Apply%20for%20Trial%20-%20PipingCAD" class="btn btn-secondary" data-i18n="pricing_professional_trial" style="margin-top: 0.6rem;">Apply for Trial</a>
+            </div>
+            <div class="pricing-card reveal delay-3">
+                <h3 data-i18n="pricing_enterprise_title">Enterprise</h3>
+                <p class="pricing-subtitle" data-i18n="pricing_enterprise_subtitle">For large organizations</p>
+                <div class="pricing-price" data-i18n="pricing_enterprise_price">Contact Us</div>
+                <ul class="pricing-features">
+                    <li data-i18n="pricing_enterprise_feat1">Everything in Professional</li>
+                    <li data-i18n="pricing_enterprise_feat2">Multi-seat licensing</li>
+                    <li data-i18n="pricing_enterprise_feat3">Custom integrations</li>
+                    <li data-i18n="pricing_enterprise_feat4">On-premise deployment</li>
+                    <li data-i18n="pricing_enterprise_feat5">Phone and on-site support</li>
+                    <li data-i18n="pricing_enterprise_feat6">Training and onboarding</li>
+                    <li data-i18n="pricing_enterprise_feat7">Custom feature development</li>
+                </ul>
+                <a href="mailto:zhao.industrial.auto@gmail.com?subject=Enterprise%20Quote%20-%20PipingCAD" class="btn btn-secondary" data-i18n="pricing_enterprise_cta">Request Quote</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="section faq" id="faq">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="faq_label">FAQ</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <button class="faq-question" data-i18n="faq_q1">Is PipingCAD difficult to learn?</button>
+                <div class="faq-answer"><p data-i18n="faq_a1">Most users are productive within 2-3 hours. The interface is designed for engineers and drafters, with intuitive parameter input and clear visual feedback.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" data-i18n="faq_q2">What file formats does it export?</button>
+                <div class="faq-answer"><p data-i18n="faq_a2">PipingCAD exports DXF (R2000+ compatible with all major CAD systems), STEP for 3D model exchange, and PDF production reports with embedded QR codes.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" data-i18n="faq_q3">How accurate are the calculations?</button>
+                <div class="faq-answer"><p data-i18n="faq_a3">Our analytical geometry solver achieves micron-level precision. Unlike approximation methods, our calculations are based on exact mathematical solutions.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" data-i18n="faq_q4">Can it integrate with my existing CAD software?</button>
+                <div class="faq-answer"><p data-i18n="faq_a4">Yes! PipingCAD auto-detects installed CAD software and can push drawings directly into your CAD space. No manual import/export steps required.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="section contact" id="contact">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="contact_label">Get Started</span>
+            <h2 class="section-title">Start Your Free Trial</h2>
+            <p class="section-subtitle" data-i18n="contact_subtitle">Start your free trial today or contact us for a personalized demo.</p>
+        </div>
+        <form class="contact-form reveal" action="https://formspree.io/f/mldjqyrw" method="POST">
+            <div class="form-group"><label data-i18n="contact_name_label">Full Name *</label><input type="text" name="name" data-i18n="contact_name_placeholder" placeholder="John Smith" required></div>
+            <div class="form-group"><label data-i18n="contact_email_label">Work Email *</label><input type="email" name="email" data-i18n="contact_email_placeholder" placeholder="john@company.com" required></div>
+            <div class="form-group"><label data-i18n="contact_company_label">Company</label><input type="text" name="company" data-i18n="contact_company_placeholder" placeholder="Your Company"></div>
+            <div class="form-group"><label data-i18n="contact_interest_label">I am interested in...</label>
+                <select name="interest">
+                    <option value="trial" data-i18n="contact_interest_trial">Free Trial</option>
+                    <option value="professional" data-i18n="contact_interest_professional">Professional License</option>
+                    <option value="enterprise" data-i18n="contact_interest_enterprise">Enterprise Quote</option>
+                    <option value="demo" data-i18n="contact_interest_demo">Live Demo</option>
+                    <option value="question" data-i18n="contact_interest_question">General Question</option>
+                </select>
+            </div>
+            <div class="form-group"><label data-i18n="contact_message_label">Message</label><textarea name="message" data-i18n="contact_message_placeholder" placeholder="Tell us about your project..."></textarea></div>
+            <button type="submit" class="btn btn-primary" data-i18n="contact_submit">Send Message</button>
+        </form>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand"><span class="logo-text">PipingCAD</span><p data-i18n="footer_tagline">Industrial-grade piping engine for precision fabrication. From parameters to production in seconds.</p></div>
+            <div class="footer-col"><h4 data-i18n="footer_product">Product</h4><a href="#features" data-i18n="footer_features">Features</a><a href="#pricing" data-i18n="footer_pricing">Pricing</a><a href="#demo-interactive" data-i18n="nav_bend_demo">Bend Demo</a></div>
+            <div class="footer-col"><h4 data-i18n="footer_resources">Resources</h4><a href="#faq" data-i18n="footer_faq">FAQ</a><a href="mailto:zhao.industrial.auto@gmail.com?subject=Support%20-%20PipingCAD" data-i18n="footer_support">Support</a></div>
+            <div class="footer-col"><h4 data-i18n="footer_contact_label">Contact</h4><a href="mailto:zhao.industrial.auto@gmail.com">zhao.industrial.auto@gmail.com</a></div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2025 PipingCAD. All rights reserved.</span>
+            <div><a href="#" data-i18n="footer_privacy">Privacy Policy</a><a href="#" data-i18n="footer_terms">Terms of Service</a></div>
+        </div>
+    </footer>
+<script>
+    // ==========================================
+    // TRANSLATIONS - 7 languages
+    // ==========================================
+    window.translations = {
+        en: {
+            nav_features: 'Features',
+            nav_bend_demo: 'Bend Demo',
+            nav_pricing: 'Pricing',
+            nav_faq: 'FAQ',
+            nav_contact: 'Contact',
+            hero_badge: '\u2699 Industrial-Grade Piping Engine',
+            hero_highlight: 'Precision Forged.',
+            hero_subtitle: 'Production Ready.',
+            hero_slogan: 'From pipe parameters to cut-ready DXF in seconds. Analytical intersection solver \u00b7 Intelligent nesting \u00b7 Production-ready output.',
+            hero_cta_trial: 'Get Free Trial \u2192',
+            hero_cta_demo: 'Interactive Demo',
+            problem_label: 'The Problem',
+            problem_title: 'Manual Piping Design Is Killing Your Margins',
+            problem_subtitle: 'Fabrication shops lose thousands per project to manual calculations, trial-and-error fitting, and expensive enterprise software.',
+            problem_hours: 'Hours of Manual Work',
+            problem_hours_desc: 'Engineers spend 4-8 hours per project manually calculating expansions, intersections, and creating drawings.',
+            problem_errors: 'Costly Fitment Errors',
+            problem_errors_desc: 'Manual calculations are not perfect. Field fit issues cost $5,000-$50,000 per incident in rework and delays.',
+            problem_software: 'Expensive Enterprise Software',
+            problem_software_desc: 'CAD packages like AutoCAD Plant 3D cost $10,000+/year. Overkill for pipe-only work with steep learning curves.',
+            solution_label: 'The Solution',
+            solution_title: 'From Parameters to Production in Minutes',
+            solution_subtitle: 'PipingCAD automates the entire pipeline from pipe specification to nesting, G-code, cost reports, and production-ready DXF files.',
+            solution_step1: 'Enter Pipe Parameters',
+            solution_step1_desc: 'Specify diameter, thickness, bend radius, material, and welding standards. Our intelligent engine handles the complex geometry.',
+            solution_step2: 'Analytical Calculation',
+            solution_step2_desc: 'Our proprietary solvers compute precise 3D models, intersection curves, and flat patterns using exact mathematical methods.',
+            solution_step3: 'Production-Ready Output',
+            solution_step3_desc: 'Get DXF files with embedded QR codes, cutting lists, and cost reports. Ready for your CNC machines.',
+            fitting_types: 'Supported Fittings',
+            fitting_types_title: '13 Fitting Types',
+            fitting_subtitle: 'All standard pipe fitting geometries pre-configured. From straight pipes to complex Y-Branches and Square-to-Round transitions.',
+            fit_1_name: 'Standard Elbow',
+            fit_1_desc: 'Multi-segment mitered - Configurable R, angle, segment count',
+            fit_1b_name: 'Double Eccentric Elbow',
+            fit_1b_desc: 'Elbow with two different bend radii - variable wall thickness',
+            fit_2_name: 'Tee',
+            fit_2_desc: 'Main + branch pipe intersection - Configurable branch angle',
+            fit_3_name: 'Concentric Cone',
+            fit_3_desc: 'Concentric reducer with variable taper ratio',
+            fit_4_name: 'Eccentric Cone',
+            fit_4_desc: 'Eccentric reducer with offset centerline',
+            fit_5_name: 'Square-to-Round',
+            fit_5_desc: 'Rectangular to circular transition duct',
+            fit_6_name: 'Y-Branch',
+            fit_6_desc: 'Two legs at configurable angle off main pipe',
+            fit_7_name: 'Flange',
+            fit_7_desc: 'Circular flange with bolt holes - Configurable PN rating',
+            fit_8_name: 'Pipe (Straight)',
+            fit_8_desc: 'Straight pipe section with configurable length and wall',
+            fit_9_name: 'Flat Oval',
+            fit_9_desc: 'Oval cross-section pipe for ventilation and ducting',
+            fit_10_name: 'Rectangular Pipe',
+            fit_10_desc: 'Square/rectangular duct with configurable dimensions',
+            fit_11_name: 'Rectangular Elbow',
+            fit_11_desc: 'Square/rectangular duct elbow - Configurable angle 0-180',
+            fit_12_name: 'Screw Flight',
+            fit_12_desc: 'Helical auger blade with optional liner',
+            features_label: 'Capabilities',
+            features_title: 'Built for Industrial Precision',
+            features_subtitle: 'Every feature designed to reduce waste, eliminate errors, and speed production.',
+            feature_library: 'Parametric Library',
+            feature_library_desc: 'Full ISO/ANSI standard parts: elbows, tees, cones, flanges, Y-branches, and custom fittings with instant parameterization.',
+            feature_intersections: 'Analytical Intersections',
+            feature_intersections_desc: 'Exact mathematical solutions for pipe intersections. No approximations. Micron-level precision ensures perfect fit.',
+            feature_nesting: 'Intelligent Nesting',
+            feature_nesting_desc: 'Shapely-powered optimization maximizes sheet utilization. Typical savings: 15-25% reduction in material costs.',
+            feature_export: 'DXF + CNC G-Code Export',
+            feature_export_desc: 'Export production-ready DXF with multi-layer output. Also generates CNC G-code for Fanuc, Amada, and Trumpf controllers.',
+            feature_costing: 'Costing Engine',
+            feature_costing_desc: 'Full cost breakdown per part: material cost, laser cutting, bending, welding, profit margin, and VAT. Auto-generates PDF invoices with 3D screenshots.',
+            feature_standards: 'Standards Database and Batch Processing',
+            feature_standards_desc: 'Built-in ASME/EN pipe standards database. Batch task queue with priority levels, retry logic, and CLI mode for headless automation.',
+            instant_label: 'Instant Generation',
+            instant_title: 'Parametric Generation: Data to Manufacturing in 1 Second',
+            instant_subtitle: 'Enter parameters, generate precise 3D models and 2D flat patterns with one click. No manual drafting needed.',
+            instant_params: 'Enter Part Parameters...',
+            instant_preview: 'Preview Demo',
+            instant_preview_title: '3D Model Preview',
+            instant_preview_desc: 'Generated flat pattern with dimensioning ready for CNC export',
+            instant_caption: 'Real-time: 3D Model + 2D Flat Pattern + Dimensioning',
+            demo_bend_label: 'Interactive Bend Demo',
+            demo_bend_title: 'Parametric Demo: Adjust Any Parameter Instantly',
+            demo_bend_subtitle: 'Every parameter is fully adjustable - segment count, bend radius, wall thickness, angle, and material. Try one example below.',
+            demo_bend_segments: 'SEGMENTS',
+            demo_bend_try_this: 'Try this -> ',
+            nesting_label: 'Intelligent Nesting',
+            nesting_title: 'Intelligent Irregular Nesting: Every Inch of Steel Counts',
+            nesting_subtitle: 'Four optimization strategies powered by genetic algorithms. Auto-rotation at 0/90/180/270. Typical savings: 15-25% material utilization improvement.',
+            nest_utilization: '15-25% Material Savings',
+            dashboard_label: 'Production Reports and Digital DNA',
+            dashboard_title: 'Digital Management: Drawings as Data',
+            dashboard_subtitle: 'Every DXF carries complete Production Reports and Digital DNA - scan the QR code to access all process information.',
+            dashboard_preview_title: 'BOM and Process Data',
+            dashboard_preview_desc: 'Auto-generated: part numbers - materials - specs - quantities - weights - QR traceability',
+            demo_label: 'See It In Action',
+            demo_title: 'Watch PipingCAD Transform Your Workflow',
+            demo_subtitle: 'See how quickly you can go from pipe specification to production-ready DXF files.',
+            demo_video_title: 'Demo Video',
+            demo_video_desc: 'See PipingCAD in action - from parameters to cut-ready DXF in seconds.<br>Contact us for a live walkthrough.',
+            demo_cta: 'Request Live Demo',
+            pricing_label: 'Pricing',
+                        pricing_subtitle: 'Choose the plan that fits your shop. Upgrade anytime.',
+            pricing_trial_title: 'Mini',
+            pricing_trial_subtitle: 'Essential 6 fittings',
+            pricing_trial_price: '/year',
+            pricing_trial_feat1: '6 core fitting types: elbow, tee, cone, Y-branch, flange, pipe',
+            pricing_trial_feat2: 'Full parameter adjustment for all types',
+            pricing_trial_feat3: '3D preview + 2D flat view',
+            pricing_trial_feat4: 'DXF export, no watermark',
+            pricing_trial_feat5: 'Basic cost estimation',
+            pricing_trial_cta: 'Buy Mini',
+            pricing_popular_badge: 'Most Popular',
+            pricing_professional_title: 'Professional',
+            pricing_professional_subtitle: 'For fabrication shops and engineers',
+            pricing_professional_period: '/year',
+            pricing_professional_feat1: 'Unlimited parts',
+            pricing_professional_feat2: 'All fittings including advanced',
+            pricing_professional_feat3: 'Advanced nesting and batch processing',
+            pricing_professional_feat4: 'DXF + STEP export',
+            pricing_professional_feat5: 'QR code and DNA embedding',
+            pricing_professional_feat6: 'PDF report generation',
+            pricing_professional_feat7: 'Priority email support',
+            pricing_professional_feat8: '1 year of updates',
+            pricing_professional_cta: 'Buy Professional',
+            pricing_professional_trial: 'Apply for Trial',
+            pricing_enterprise_title: 'Enterprise',
+            pricing_enterprise_subtitle: 'For large organizations',
+            pricing_enterprise_price: 'Contact Us',
+            pricing_enterprise_feat1: 'Everything in Professional',
+            pricing_enterprise_feat2: 'Multi-seat licensing',
+            pricing_enterprise_feat3: 'Custom integrations',
+            pricing_enterprise_feat4: 'On-premise deployment',
+            pricing_enterprise_feat5: 'Phone and on-site support',
+            pricing_enterprise_feat6: 'Training and onboarding',
+            pricing_enterprise_feat7: 'Custom feature development',
+            pricing_enterprise_cta: 'Request Quote',
+            faq_label: 'FAQ',
+            faq_q1: 'Is PipingCAD difficult to learn?',
+            faq_a1: 'Most users are productive within 2-3 hours. The interface is designed for engineers and drafters, with intuitive parameter input and clear visual feedback.',
+            faq_q2: 'What file formats does it export?',
+            faq_a2: 'PipingCAD exports DXF (R2000+ compatible with all major CAD systems), STEP for 3D model exchange, and PDF production reports with embedded QR codes.',
+            faq_q3: 'How accurate are the calculations?',
+            faq_a3: 'Our analytical geometry solver achieves micron-level precision. Unlike approximation methods, our calculations are based on exact mathematical solutions.',
+            faq_q4: 'Can it integrate with my existing CAD software?',
+            faq_a4: 'Yes! PipingCAD auto-detects installed CAD software and can push drawings directly into your CAD space. No manual import/export steps required.',
+            contact_label: 'Get Started',
+            contact_subtitle: 'Start your free trial today or contact us for a personalized demo.',
+            contact_name_label: 'Full Name *',
+            contact_name_placeholder: 'John Smith',
+            contact_email_label: 'Work Email *',
+            contact_email_placeholder: 'john@company.com',
+            contact_company_label: 'Company',
+            contact_company_placeholder: 'Your Company',
+            contact_interest_label: 'I am interested in...',
+            contact_interest_trial: 'Free Trial',
+            contact_interest_professional: 'Professional License',
+            contact_interest_enterprise: 'Enterprise Quote',
+            contact_interest_demo: 'Live Demo',
+            contact_interest_question: 'General Question',
+            contact_message_label: 'Message',
+            contact_message_placeholder: 'Tell us about your project...',
+            contact_submit: 'Send Message',
+            footer_tagline: 'Industrial-grade piping engine for precision fabrication. From parameters to production in seconds.',
+            pdf_title: 'PDF Production Report + QR Code',
+            pdf_placeholder: 'Insert PDF Report Screenshot Here',
+            pdf_placeholder_sub: 'Recommended: 1200x900px PNG showing report preview',
+            pdf_inside_title: 'What\'s Inside Each Report',
+            pdf_feat_1: '3D Renderings with dimensioning',
+            pdf_feat_2: 'Flat Pattern preview with annotations',
+            pdf_feat_3: 'Cutting List with quantities',
+            pdf_feat_4: 'QR Traceability Code - scan for all data',
+            pdf_feat_5: 'Process Instructions and welding specs',
+            pdf_caption: 'Scan the QR code on any DXF to instantly access the full production dossier - no software required.',
+            tech_label: 'Industrial-Grade Features',
+            tech_title: 'Production-Ready Capabilities You Can\'t Afford to Miss',
+            tech_subtitle: 'From CNC code to cost reports — every feature engineered for real factory workflows.',
+            tech_1_title: 'CNC G-Code Export',
+            tech_1_desc: 'Full support for Fanuc, Amada, and Trumpf controllers. Output production-ready G-code with toolpath optimization, feed rates, and multi-layer nesting. No post-processing needed.',
+            tech_2_title: 'Complete Costing Engine',
+            tech_2_desc: 'Itemized quote breakdown: material cost, laser cutting, punching, bending, welding, profit margin, and VAT. Auto-generates PDF invoices with 3D screenshots.',
+            tech_3_title: 'PDF Production Report + QR',
+            tech_3_desc: 'Not just a BOM — a full job dossier with 3D renderings, flat pattern preview, cutting list, QR traceability code, and process instructions. Scan to access all data.',
+            tech_4_title: 'Multi-Strategy Batch Processing',
+            tech_4_desc: 'SQLite-persistent task queue with priority levels, automatic retry, and checkpoint resume. Queue hundreds of parts, process overnight, and wake up to finished DXFs.',
+            tech_5_title: 'Standards Database',
+            tech_5_desc: 'Built-in ASME/EN pipe standards, flange standards (PN16, WN, SO, BL, PL), and elbow/tee dimensional tables. No need to look up specs — everything is pre-loaded.',
+            footer_product: 'Product',
+            footer_features: 'Features',
+            footer_pricing: 'Pricing',
+            footer_resources: 'Resources',
+            footer_faq: 'FAQ',
+            footer_support: 'Support',
+            footer_contact_label: 'Contact',
+            footer_privacy: 'Privacy Policy',
+            footer_terms: 'Terms of Service'
+        },
+        zh: {
+            nav_features: '功能',
+            nav_bend_demo: '弯管演示',
+            nav_pricing: '价格',
+            nav_faq: '常见问题',
+            nav_contact: '联系我们',
+            hero_badge: '⚙ 工业级管道引擎',
+            hero_highlight: '精准锻造。',
+            hero_subtitle: '生产就绪。',
+            hero_slogan: '从管道参数到可切割DXF文件，只需数秒。解析交叉求解器 · 智能套排 · 生产级输出。',
+            hero_cta_trial: '获取免费试用 →',
+            hero_cta_demo: '交互演示',
+            problem_label: '问题',
+            problem_title: '手动管道设计正在吞噬你的利润',
+            problem_subtitle: '制造车间每个项目因手动计算、试错装配和昂贵的工业软件损失数千美元。',
+            problem_hours: '数小时手动工作',
+            problem_hours_desc: '工程师每个项目花费4-8小时手动计算展开、交叉点和创建图纸。',
+            problem_errors: '昂贵的装配错误',
+            problem_errors_desc: '手动计算不完美。现场装配问题每次事故造成$5,000-$50,000返工和延误。',
+            problem_software: '昂贵的企业软件',
+            problem_software_desc: 'AutoCAD Plant 3D等CAD软件每年$10,000+。对于仅管道工作来说大材小用，学习曲线陡峭。',
+            solution_label: '解决方案',
+            solution_title: '从参数到生产，只需几分钟',
+            solution_subtitle: 'PipingCAD自动完成从管道规格到套排、G代码、成本报告和生产级DXF文件的整个流程。',
+            solution_step1: '输入管道参数',
+            solution_step1_desc: '指定直径、壁厚、弯曲半径、材料和焊接标准。我们的智能引擎处理复杂几何计算。',
+            solution_step2: '解析计算',
+            solution_step2_desc: '我们的专有求解器使用精确数学方法计算精确的3D模型、交叉曲线和展开图。',
+            solution_step3: '生产级输出',
+            solution_step3_desc: '获取带嵌入二维码的DXF文件、切割清单和成本报告。可直接用于CNC机床。',
+            fitting_types: '支持的管件',
+            fitting_types_title: '13种管件类型',
+            fitting_subtitle: '所有标准管道管件几何形状预配置。从直管到复杂的Y型分支和方圆过渡。',
+            fit_1_name: '标准弯头',
+            fit_1_desc: '多段斜接弯头 · 可配置半径、角度、段数',
+            fit_1b_name: '双偏心弯头',
+            fit_1b_desc: '两种不同弯曲半径的弯头 · 可变壁厚',
+            fit_2_name: '三通',
+            fit_2_desc: '主管+支管交叉 · 可配置分支角度',
+            fit_3_name: '同心锥管',
+            fit_3_desc: '同心变径管，可配置锥度比',
+            fit_4_name: '偏心锥管',
+            fit_4_desc: '偏心变径管，中心线偏移',
+            fit_5_name: '方圆过渡',
+            fit_5_desc: '矩形到圆形过渡管道',
+            fit_6_name: 'Y型分支',
+            fit_6_desc: '主管上两个支腿，角度可配置',
+            fit_7_name: '法兰',
+            fit_7_desc: '带螺栓孔的圆形法兰 · 可配置PN等级',
+            fit_8_name: '直管',
+            fit_8_desc: '直管段，可配置长度和壁厚',
+            fit_9_name: '扁椭圆管',
+            fit_9_desc: '椭圆截面管道，用于通风和管道系统',
+            fit_10_name: '矩形管',
+            fit_10_desc: '方形/矩形管道，可配置尺寸',
+            fit_11_name: '矩形弯头',
+            fit_11_desc: '方形/矩形管道弯头 · 可配置角度0-180°',
+            fit_12_name: '螺旋叶片',
+            fit_12_desc: '螺旋推进器叶片，可选内衬',
+            features_label: '功能特性',
+            features_title: '为工业精度而生',
+            features_subtitle: '每个功能旨在减少浪费、消除错误、加速生产。',
+            feature_library: '参数化库',
+            feature_library_desc: '完整的ISO/ANSI标准零件：弯头、三通、锥管、法兰、Y型分支和自定义管件，即时参数化。',
+            feature_intersections: '解析交叉计算',
+            feature_intersections_desc: '管道交叉的精确数学解。无近似值。微米级精度确保完美配合。',
+            feature_nesting: '智能套排',
+            feature_nesting_desc: 'Shapely驱动的优化最大化板材利用率。典型节省：材料成本降低15-25%。',
+            feature_export: 'DXF + CNC G代码导出',
+            feature_export_desc: '导出生产级DXF，多层输出。同时生成Fanuc、Amada和Trumpf控制器的CNC G代码。',
+            feature_costing: '成本计算引擎',
+            feature_costing_desc: '每个零件完整成本分解：材料成本、激光切割、折弯、焊接、利润率和增值税。自动生成带3D截图的PDF发票。',
+            feature_standards: '标准数据库和批处理',
+            feature_standards_desc: '内置ASME/EN管道标准数据库。带优先级、重试逻辑和CLI模式（无人值守自动化）的批处理任务队列。',
+            instant_label: '即时生成',
+            instant_title: '参数化生成：1秒从数据到制造',
+            instant_subtitle: '输入参数，一键生成精确3D模型和2D展开图。无需手动绘图。',
+            instant_params: '输入零件参数...',
+            instant_preview: '预览演示',
+            instant_preview_title: '3D模型预览',
+            instant_preview_desc: '已生成的展开图，带尺寸标注，可CNC导出',
+            instant_caption: '实时：3D模型 + 2D展开图 + 尺寸标注',
+            demo_bend_label: '弯管交互演示',
+            demo_bend_title: '参数化演示：实时调整任何参数',
+            demo_bend_subtitle: '每个参数均可完全调整——段数、弯曲半径、壁厚、角度和材料。下面尝试一个示例。',
+            demo_bend_segments: '段数',
+            demo_bend_try_this: '试试这个 → ',
+            nesting_label: '智能套排',
+            nesting_title: '智能不规则套排：每一寸钢材都宝贵',
+            nesting_subtitle: '四种基于遗传算法的优化策略。自动旋转0/90/180/270度。典型节省：材料利用率提高15-25%。',
+            nest_utilization: '15-25%材料节省',
+            dashboard_label: '生产报告和数字DNA',
+            dashboard_title: '数字化管理：图纸即数据',
+            dashboard_subtitle: '每张DXF携带完整的生产报告和数字DNA——扫描二维码获取所有工艺信息。',
+            dashboard_preview_title: 'BOM和工艺数据',
+            dashboard_preview_desc: '自动生成：零件编号 - 材料 - 规格 - 数量 - 重量 - 二维码追溯',
+            demo_label: '观看演示',
+            demo_title: '看PipingCAD如何改变你的工作流程',
+            demo_subtitle: '看看从管道规格到生产级DXF文件有多快。',
+            demo_video_title: '演示视频',
+            demo_video_desc: '看PipingCAD的实际操作——从参数到可切割DXF只需数秒。<br>联系我们进行实时演示。',
+            demo_cta: '请求实时演示',
+            pricing_label: '价格',
+            pricing_subtitle: '选择适合您工厂的方案，随时升级。',
+            pricing_trial_title: '迷你版',
+            pricing_trial_subtitle: '6种核心管件',
+            pricing_trial_price: '/年',
+            pricing_trial_feat1: '6种核心管件：弯头、三通、大小头、Y型分支、法兰、管段',
+            pricing_trial_feat2: '所有类型参数完整可调',
+            pricing_trial_feat3: '3D预览 + 2D展开图',
+            pricing_trial_feat4: 'DXF导出，无水印',
+            pricing_trial_feat5: '基础成本核算',
+            pricing_trial_cta: '购买迷你版',
+            pricing_popular_badge: '最受欢迎',
+            pricing_professional_title: '专业版',
+            pricing_professional_subtitle: '适用于制造车间和工程师',
+            pricing_professional_period: '/年',
+            pricing_professional_feat1: '无限零件生成',
+            pricing_professional_feat2: '全部13种管件，参数全开',
+            pricing_professional_feat3: '智能套料优化器（4种遗传算法）',
+            pricing_professional_feat4: '无水印 DXF + STEP导出',
+            pricing_professional_feat5: 'PDF报告 + QR/DNA嵌入',
+            pricing_professional_feat6: '完整成本核算，分项报价',
+            pricing_professional_feat7: '批处理任务队列',
+            pricing_professional_feat8: '优先邮件支持',
+            pricing_professional_feat9: '1年更新',
+            pricing_professional_cta: '购买专业版',
+            pricing_professional_trial: '申请试用',
+            pricing_enterprise_title: '企业版',
+            pricing_enterprise_subtitle: '适用于大型组织',
+            pricing_enterprise_price: '联系我们',
+            pricing_enterprise_feat1: '包含专业版所有功能',
+            pricing_enterprise_feat2: '多席位授权',
+            pricing_enterprise_feat3: '自定义集成',
+            pricing_enterprise_feat4: '本地部署',
+            pricing_enterprise_feat5: '电话和现场支持',
+            pricing_enterprise_feat6: '培训和 onboarding',
+            pricing_enterprise_feat7: '自定义功能开发',
+            pricing_enterprise_cta: '请求报价',
+            faq_label: '常见问题',
+            faq_q1: 'PipingCAD学习难度大吗？',
+            faq_a1: '大多数用户在2-3小时内即可上手。界面为工程师和绘图员设计，直观的参数输入和清晰的视觉反馈。',
+            faq_q2: '它导出哪些文件格式？',
+            faq_a2: 'PipingCAD导出DXF（R2000+兼容所有主要CAD系统）、STEP（3D模型交换）和带嵌入式二维码的PDF生产报告。',
+            faq_q3: '计算精度如何？',
+            faq_a3: '我们的解析几何求解器实现微米级精度。与近似方法不同，我们的计算基于精确的数学解。',
+            faq_q4: '能否与我现有的CAD软件集成？',
+            faq_a4: '可以！PipingCAD自动检测已安装的CAD软件，可直接将图纸推送到CAD空间中，无需手动导入/导出步骤。',
+            contact_label: '开始使用',
+            contact_subtitle: '立即开始免费试用或联系我们获取个性化演示。',
+            contact_name_label: '全名 *',
+            contact_name_placeholder: '张三',
+            contact_email_label: '工作邮箱 *',
+            contact_email_placeholder: 'zhang@company.com',
+            contact_company_label: '公司',
+            contact_company_placeholder: '您的公司',
+            contact_interest_label: '我感兴趣的是...',
+            contact_interest_trial: '免费试用',
+            contact_interest_professional: '专业版授权',
+            contact_interest_enterprise: '企业报价',
+            contact_interest_demo: '实时演示',
+            contact_interest_question: '一般咨询',
+            contact_message_label: '留言',
+            contact_message_placeholder: '告诉我们您的项目...',
+            contact_submit: '发送消息',
+            footer_tagline: '工业级管道引擎，用于精密制造。从参数到生产只需数秒。',
+            pdf_title: 'PDF生产报告 + 二维码',
+            pdf_placeholder: '在此插入PDF报告截图',
+            pdf_placeholder_sub: '建议尺寸：1200x900px PNG，展示报告预览',
+            pdf_inside_title: '每份报告包含',
+            pdf_feat_1: '带尺寸标注的3D渲染图',
+            pdf_feat_2: '带注释的展开图预览',
+            pdf_feat_3: '含数量的切割清单',
+            pdf_feat_4: 'QR码追溯 - 扫码获取全部数据',
+            pdf_feat_5: '工艺说明和焊接规范',
+            pdf_caption: '扫描任意DXF上的二维码，即时获取完整生产档案 - 无需任何软件。',
+            tech_label: '工业级特性',
+            tech_title: '你不能错过的生产就绪功能',
+            tech_subtitle: '从CNC代码到成本报告——每一项都为真实工厂工作流程而设计。',
+            tech_1_title: 'CNC G代码导出',
+            tech_1_desc: '全面支持Fanuc、Amada和Trumpf控制器。输出生产就绪的G代码，含刀具路径优化、进给速率和多层套排。无需后处理。',
+            tech_2_title: '完整成本核算引擎',
+            tech_2_desc: '逐项报价分解：材料成本、激光切割、冲孔、折弯、焊接、利润率和增值税。自动生成带3D截图的PDF发票。',
+            tech_3_title: 'PDF生产报告 + 二维码',
+            tech_3_desc: '不仅仅是BOM表——完整的任务档案：3D渲染图、展开图预览、切割清单、QR码追溯和工艺说明。扫码即可获取全部数据。',
+            tech_4_title: '多策略批量处理',
+            tech_4_desc: 'SQLite持久化任务队列，支持优先级、自动重试和断点续传。队列中放入数百个零件，通宵处理后直接获得完成品DXF。',
+            tech_5_title: '标准件数据库',
+            tech_5_desc: '内置ASME/EN管道标准、法兰标准（PN16/WN/SO/BL/PL）以及弯头三通尺寸表。无需查阅手册——所有数据预载入。',
+            footer_product: '产品',
+            footer_features: '功能',
+            footer_pricing: '价格',
+            footer_resources: '资源',
+            footer_faq: '常见问题',
+            footer_support: '支持',
+            footer_contact_label: '联系',
+            footer_privacy: '隐私政策',
+            footer_terms: '服务条款',
+        },
+        de: {
+            nav_features: 'Funktionen',
+            nav_bend_demo: 'Biege-Demo',
+            nav_pricing: 'Preise',
+            nav_faq: 'FAQ',
+            nav_contact: 'Kontakt',
+            hero_badge: '⚙ Industrielle Rohrleitungs-Engine',
+            hero_highlight: 'Präzise geschmiedet.',
+            hero_subtitle: 'Produktionsbereit.',
+            hero_slogan: 'Von Rohrparametern zu schnittbereitem DXF in Sekunden. Analytischer Schnittpunkt-Löser · Intelligentes Nesting · Produktionsreife Ausgabe.',
+            hero_cta_trial: 'Kostenlose Testversion →',
+            hero_cta_demo: 'Interaktive Demo',
+            problem_label: 'Das Problem',
+            problem_title: 'Manuelle Rohrleitungskonstruktion frisst Ihre Margen',
+            problem_subtitle: 'Fertigungsbetriebe verlieren pro Projekt Tausende durch manuelle Berechnungen, Trial-and-Error-Anpassung und teure Unternehmenssoftware.',
+            problem_hours: 'Stunden manueller Arbeit',
+            problem_hours_desc: 'Ingenieure verbringen 4-8 Stunden pro Projekt mit manuellen Berechnungen von Expansionen, Schnittpunkten und Zeichnungen.',
+            problem_errors: 'Kostspielige Passfehler',
+            problem_errors_desc: 'Manuelle Berechnungen sind nicht perfekt. Passprobleme vor Ort kosten $5.000-$50.000 pro Vorfall an Nacharbeit und Verzögerungen.',
+            problem_software: 'Teure Unternehmenssoftware',
+            problem_software_desc: 'CAD-Pakete wie AutoCAD Plant 3D kosten $10.000+/Jahr. Überdimensioniert für reine Rohrarbeiten mit steiler Lernkurve.',
+            solution_label: 'Die Lösung',
+            solution_title: 'Von Parametern zur Produktion in Minuten',
+            solution_subtitle: 'PipingCAD automatisiert die gesamte Pipeline von der Rohrspezifikation bis zu Nesting, G-Code, Kostenberichten und produktionsbereiten DXF-Dateien.',
+            solution_step1: 'Rohrparameter eingeben',
+            solution_step1_desc: 'Geben Sie Durchmesser, Wandstärke, Biegeradius, Material und Schweißstandards an. Unsere intelligente Engine übernimmt die komplexe Geometrie.',
+            solution_step2: 'Analytische Berechnung',
+            solution_step2_desc: 'Unsere proprietären Löser berechnen präzise 3D-Modelle, Schnittkurven und Abwicklungen mit exakten mathematischen Methoden.',
+            solution_step3: 'Produktionsbereite Ausgabe',
+            solution_step3_desc: 'Erhalten Sie DXF-Dateien mit eingebetteten QR-Codes, Schnittlisten und Kostenberichten. Bereit für Ihre CNC-Maschinen.',
+            fitting_types: 'Unterstützte Fittings',
+            fitting_types_title: '13 Fitting-Typen',
+            fitting_subtitle: 'Alle Standard-Rohrformstücke vorkonfiguriert. Von geraden Rohren bis zu komplexen Y-Abzweigen und Vierkant-zu-Rund-Übergängen.',
+            fit_1_name: 'Standardbogen',
+            fit_1_desc: 'Mehrsegment-Gehrung - Konfigurierbarer R, Winkel, Segmentanzahl',
+            fit_1b_name: 'Doppelt-exzentrischer Bogen',
+            fit_1b_desc: 'Bogen mit zwei verschiedenen Biegeradien - variable Wandstärke',
+            fit_2_name: 'T-Stück',
+            fit_2_desc: 'Haupt- + Abzweigrohr-Schnittpunkt - Konfigurierbarer Abzweigwinkel',
+            fit_3_name: 'Konzentrischer Konus',
+            fit_3_desc: 'Konzentrischer Reduzierer mit variablem Verjüngungsverhältnis',
+            fit_4_name: 'Exzentrischer Konus',
+            fit_4_desc: 'Exzentrischer Reduzierer mit versetzter Mittellinie',
+            fit_5_name: 'Viereck-zu-Rund',
+            fit_5_desc: 'Rechteck-zu-Kreis-Übergangskanal',
+            fit_6_name: 'Y-Abzweig',
+            fit_6_desc: 'Zwei Schenkel in konfigurierbarem Winkel vom Hauptrohr',
+            fit_7_name: 'Flansch',
+            fit_7_desc: 'Rundflansch mit Schraubenlöchern - Konfigurierbare PN-Klasse',
+            fit_8_name: 'Gerades Rohr',
+            fit_8_desc: 'Gerades Rohrstück mit konfigurierbarer Länge und Wandstärke',
+            fit_9_name: 'Flachoval',
+            fit_9_desc: 'Ovales Querschnittsrohr für Lüftung und Kanäle',
+            fit_10_name: 'Rechteckrohr',
+            fit_10_desc: 'Quadratisches/rechteckiges Rohr mit konfigurierbaren Abmessungen',
+            fit_11_name: 'Rechteckbogen',
+            fit_11_desc: 'Quadratischer/rechteckiger Kanalbogen - Konfigurierbarer Winkel 0-180°',
+            fit_12_name: 'Schneckenflügel',
+            fit_12_desc: 'Schneckenwendel mit optionaler Auskleidung',
+            features_label: 'Funktionen',
+            features_title: 'Für industrielle Präzision gebaut',
+            features_subtitle: 'Jede Funktion darauf ausgelegt, Abfall zu reduzieren, Fehler zu vermeiden und die Produktion zu beschleunigen.',
+            feature_library: 'Parametrische Bibliothek',
+            feature_library_desc: 'Vollständige ISO/ANSI-Standardteile: Bögen, T-Stücke, Konen, Flansche, Y-Abzweige und kundenspezifische Fittings mit sofortiger Parametrisierung.',
+            feature_intersections: 'Analytische Schnittpunkte',
+            feature_intersections_desc: 'Exakte mathematische Lösungen für Rohrverschneidungen. Keine Näherungen. Mikron-Präzision für perfekte Passung.',
+            feature_nesting: 'Intelligentes Nesting',
+            feature_nesting_desc: 'Shapely-basierte Optimierung maximiert die Blechausnutzung. Typische Einsparung: 15-25% Materialkostenreduzierung.',
+            feature_export: 'DXF + CNC G-Code Export',
+            feature_export_desc: 'Export produktionsreifer DXF mit Mehrschichtausgabe. Generiert auch CNC G-Code für Fanuc, Amada und Trumpf Steuerungen.',
+            feature_costing: 'Kostenrechnungs-Engine',
+            feature_costing_desc: 'Vollständige Kostenaufschlüsselung pro Teil: Materialkosten, Laserschneiden, Biegen, Schweißen, Gewinnmarge und Mehrwertsteuer. Automatische PDF-Rechnungen mit 3D-Screenshots.',
+            feature_standards: 'Normdatenbank und Stapelverarbeitung',
+            feature_standards_desc: 'Integrierte ASME/EN-Rohrnormdatenbank. Stapelverarbeitungswarteschlange mit Prioritätsstufen, Wiederholungslogik und CLI-Modus für unbeaufsichtigte Automatisierung.',
+            instant_label: 'Sofortgenerierung',
+            instant_title: 'Parametrische Generierung: Von Daten zur Fertigung in 1 Sekunde',
+            instant_subtitle: 'Parameter eingeben, präzise 3D-Modelle und 2D-Abwicklungen mit einem Klick erstellen. Kein manuelles Zeichnen erforderlich.',
+            instant_params: 'Teileparameter eingeben...',
+            instant_preview: 'Demo ansehen',
+            instant_preview_title: '3D-Modell Vorschau',
+            instant_preview_desc: 'Generierte Abwicklung mit Bemaßung, bereit für CNC-Export',
+            instant_caption: 'Echtzeit: 3D-Modell + 2D-Abwicklung + Bemaßung',
+            demo_bend_label: 'Interaktive Biege-Demo',
+            demo_bend_title: 'Parametrische Demo: Jeden Parameter sofort anpassen',
+            demo_bend_subtitle: 'Jeder Parameter ist vollständig einstellbar - Segmentanzahl, Biegeradius, Wandstärke, Winkel und Material. Probieren Sie ein Beispiel unten.',
+            demo_bend_segments: 'SEGMENTE',
+            demo_bend_try_this: 'Probier → ',
+            nesting_label: 'Intelligentes Nesting',
+            nesting_title: 'Intelligentes unregelmäßiges Nesting: Jeder Zentimeter Stahl zählt',
+            nesting_subtitle: 'Vier Optimierungsstrategien unterstützt durch genetische Algorithmen. Automatische Drehung bei 0/90/180/270°. Typische Einsparung: 15-25% Materialausnutzungsverbesserung.',
+            nest_utilization: '15-25% Materialersparnis',
+            dashboard_label: 'Produktionsberichte und digitale DNA',
+            dashboard_title: 'Digitales Management: Zeichnungen als Daten',
+            dashboard_subtitle: 'Jede DXF trägt vollständige Produktionsberichte und digitale DNA - scannen Sie den QR-Code für alle Prozessinformationen.',
+            dashboard_preview_title: 'Stückliste und Prozessdaten',
+            dashboard_preview_desc: 'Automatisch generiert: Teilenummern - Materialien - Spezifikationen - Mengen - Gewichte - QR-Rückverfolgbarkeit',
+            demo_label: 'In Aktion sehen',
+            demo_title: 'Sehen Sie, wie PipingCAD Ihren Workflow transformiert',
+            demo_subtitle: 'Erleben Sie, wie schnell Sie von der Rohrspezifikation zur produktionsreifen DXF-Datei gelangen.',
+            demo_video_title: 'Demo-Video',
+            demo_video_desc: 'Sehen Sie PipingCAD in Aktion - von Parametern zu schnittbereitem DXF in Sekunden.<br>Kontaktieren Sie uns für eine Live-Präsentation.',
+            demo_cta: 'Live-Demo anfordern',
+            pricing_label: 'Preise',
+            pricing_subtitle: 'Wählen Sie den passenden Plan. Jederzeit upgraden.',
+            pricing_trial_title: 'Mini',
+            pricing_trial_subtitle: '6 Kernformstücke',
+            pricing_trial_price: '/Jahr',
+            pricing_trial_feat1: '6 Kernformstücke: Bogen, T-Stück, Konus, Y-Abzweig, Flansch, Rohr',
+            pricing_trial_feat2: 'Vollständige Parametereinstellung',
+            pricing_trial_feat3: '3D-Vorschau + 2D-Abwicklung',
+            pricing_trial_feat4: 'DXF-Export, wasserzeichenfrei',
+            pricing_trial_feat5: 'Basis-Kostenschätzung',
+            pricing_trial_cta: 'Mini kaufen',
+            pricing_popular_badge: 'Am beliebtesten',
+            pricing_professional_title: 'Professional',
+            pricing_professional_subtitle: 'Für Fertigungsbetriebe und Ingenieure',
+            pricing_professional_period: '/Jahr',
+            pricing_professional_monthly: 'oder $499/Monat',
+            pricing_professional_feat1: 'Unbegrenzte Teilegenerierung',
+            pricing_professional_feat2: 'Alle 13 Formstücke, alle Parameter',
+            pricing_professional_feat3: 'Intelligenter Nesting-Optimierer (4 GA-Strategien)',
+            pricing_professional_feat4: 'Wasserzeichenfreier DXF + STEP Export',
+            pricing_professional_feat5: 'PDF-Bericht + QR/DNA-Einbettung',
+            pricing_professional_feat6: 'Vollständige Kostenschätzung',
+            pricing_professional_feat7: 'Stapelverarbeitungswarteschlange',
+            pricing_professional_feat8: 'Prioritäts-E-Mail-Support',
+            pricing_professional_feat9: '1 Jahr Updates',
+            pricing_professional_cta: 'Professional kaufen',
+            pricing_professional_trial: 'Testversion anfordern',
+            pricing_enterprise_title: 'Enterprise',
+            pricing_enterprise_subtitle: 'Für große Organisationen',
+            pricing_enterprise_price: 'Kontaktieren Sie uns',
+            pricing_enterprise_feat1: 'Alles in Professional',
+            pricing_enterprise_feat2: 'Mehrplatzlizenzierung',
+            pricing_enterprise_feat3: 'Kundenspezifische Integrationen',
+            pricing_enterprise_feat4: 'On-Premise-Bereitstellung',
+            pricing_enterprise_feat5: 'Telefon- und Vor-Ort-Support',
+            pricing_enterprise_feat6: 'Schulung und Einarbeitung',
+            pricing_enterprise_feat7: 'Kundenspezifische Feature-Entwicklung',
+            pricing_enterprise_cta: 'Angebot anfordern',
+            faq_label: 'FAQ',
+            faq_q1: 'Ist PipingCAD schwer zu erlernen?',
+            faq_a1: 'Die meisten Benutzer sind innerhalb von 2-3 Stunden produktiv. Die Oberfläche ist für Ingenieure und Zeichner konzipiert, mit intuitiver Parametereingabe und klarem visuellem Feedback.',
+            faq_q2: 'Welche Dateiformate werden exportiert?',
+            faq_a2: 'PipingCAD exportiert DXF (R2000+ kompatibel mit allen wichtigen CAD-Systemen), STEP für 3D-Modellaustausch und PDF-Produktionsberichte mit eingebetteten QR-Codes.',
+            faq_q3: 'Wie genau sind die Berechnungen?',
+            faq_a3: 'Unser analytischer Geometrie-Löser erreicht Mikron-Präzision. Anders als Näherungsmethoden basieren unsere Berechnungen auf exakten mathematischen Lösungen.',
+            faq_q4: 'Kann es mit meiner vorhandenen CAD-Software integriert werden?',
+            faq_a4: 'Ja! PipingCAD erkennt installierte CAD-Software automatisch und kann Zeichnungen direkt in Ihren CAD-Raum übertragen. Keine manuellen Import-/Exportschritte erforderlich.',
+            contact_label: 'Loslegen',
+            contact_subtitle: 'Starten Sie noch heute Ihre kostenlose Testversion oder kontaktieren Sie uns für eine persönliche Demo.',
+            contact_name_label: 'Vollständiger Name *',
+            contact_name_placeholder: 'Max Mustermann',
+            contact_email_label: 'Geschäftliche E-Mail *',
+            contact_email_placeholder: 'max@firma.de',
+            contact_company_label: 'Unternehmen',
+            contact_company_placeholder: 'Ihr Unternehmen',
+            contact_interest_label: 'Ich bin interessiert an...',
+            contact_interest_trial: 'Kostenlose Testversion',
+            contact_interest_professional: 'Professional-Lizenz',
+            contact_interest_enterprise: 'Enterprise-Angebot',
+            contact_interest_demo: 'Live-Demo',
+            contact_interest_question: 'Allgemeine Frage',
+            contact_message_label: 'Nachricht',
+            contact_message_placeholder: 'Erzählen Sie uns von Ihrem Projekt...',
+            contact_submit: 'Nachricht senden',
+            footer_tagline: 'Industrielle Rohrleitungs-Engine für Präzisionsfertigung. Von Parametern zur Produktion in Sekunden.',
+            pdf_title: 'PDF-Produktionsbericht + QR-Code',
+            pdf_placeholder: 'PDF-Bericht-Screenshot hier einfugen',
+            pdf_placeholder_sub: 'Empfohlen: 1200x900px PNG mit Berichtsvorschau',
+            pdf_inside_title: 'Was jeder Bericht enthalt',
+            pdf_feat_1: '3D-Darstellungen mit Bemaung',
+            pdf_feat_2: 'Abwicklungsvorschau mit Anmerkungen',
+            pdf_feat_3: 'Schnittliste mit Mengenangaben',
+            pdf_feat_4: 'QR-Ruckverfolgbarkeit - scannen fur alle Daten',
+            pdf_feat_5: 'Prozessanweisungen und Schweispezifikationen',
+            pdf_caption: 'Scannen Sie den QR-Code auf jeder DXF, um sofort auf das vollstandige Produktionsdossier zuzugreifen. Keine Software erforderlich.',
+            tech_label: 'Industrielle Funktionen',
+            tech_title: 'Produktionsbereite Fähigkeiten, die Sie sich nicht entgehen lassen sollten',
+            tech_subtitle: 'Von CNC-Code bis zu Kostenberichten – jede Funktion für reale Fabrikabläufe entwickelt.',
+            tech_1_title: 'CNC G-Code Export',
+            tech_1_desc: 'Vollständige Unterstützung für Fanuc-, Amada- und Trumpf-Steuerungen. Produktionsreifer G-Code mit Werkzeugpfadoptimierung, Vorschüben und Mehrlagenverschachtelung. Keine Nachbearbeitung erforderlich.',
+            tech_2_title: 'Vollständige Kostenkalkulation',
+            tech_2_desc: 'Aufgeschlüsseltes Angebot: Materialkosten, Laserschneiden, Stanzen, Biegen, Schweißen, Gewinnmarge und MwSt. Automatische PDF-Rechnungen mit 3D-Screenshots.',
+            tech_3_title: 'PDF-Produktionsbericht + QR',
+            tech_3_desc: 'Mehr als eine Stückliste – ein vollständiges Job-Dossier mit 3D-Darstellungen, Abwicklungsvorschau, Schnittliste, QR-Rückverfolgbarkeit und Prozessanweisungen.',
+            tech_4_title: 'Multistrategie-Stapelverarbeitung',
+            tech_4_desc: 'SQLite-basierte Aufgabenwarteschlange mit Prioritätsstufen, automatischen Wiederholungen und Prüfpunkt-Fortsetzung. Hunderte Teile über Nacht verarbeiten.',
+            tech_5_title: 'Normdatenbank',
+            tech_5_desc: 'Integrierte ASME/EN-Rohrnormen, Flanschnormen (PN16, WN, SO, BL, PL) und Bogen-/T-Stück-Maßtabellen. Alles vorinstalliert.',
+            footer_product: 'Produkt',
+            footer_features: 'Funktionen',
+            footer_pricing: 'Preise',
+            footer_resources: 'Ressourcen',
+            footer_faq: 'FAQ',
+            footer_support: 'Support',
+            footer_contact_label: 'Kontakt',
+            footer_privacy: 'Datenschutzerklärung',
+            footer_terms: 'Allgemeine Geschäftsbedingungen',
+        },
+        fr: {
+            nav_features: 'Fonctionnalités',
+            nav_bend_demo: 'Démo coude',
+            nav_pricing: 'Tarifs',
+            nav_faq: 'FAQ',
+            nav_contact: 'Contact',
+            hero_badge: '⚙ Moteur de tuyauterie industrielle',
+            hero_highlight: 'Forgé avec précision.',
+            hero_subtitle: 'Prêt pour la production.',
+            hero_slogan: 'Des paramètres de tuyau au DXF prêt à découper en quelques secondes. Solveur d\'intersection analytique · Nesting intelligent · Sortie prête pour la production.',
+            hero_cta_trial: 'Obtenir l\'essai gratuit →',
+            hero_cta_demo: 'Démo interactive',
+            problem_label: 'Le problème',
+            problem_title: 'La conception manuelle des tuyauteries ruine vos marges',
+            problem_subtitle: 'Les ateliers de fabrication perdent des milliers de dollars par projet à cause des calculs manuels, des ajustements par essai-erreur et des logiciels d\'entreprise coûteux.',
+            problem_hours: 'Heures de travail manuel',
+            problem_hours_desc: 'Les ingénieurs passent 4 à 8 heures par projet à calculer manuellement les expansions, les intersections et à créer des dessins.',
+            problem_errors: 'Erreurs d\'ajustement coûteuses',
+            problem_errors_desc: 'Les calculs manuels ne sont pas parfaits. Les problèmes d\'ajustement sur site coûtent 5 000 à 50 000 $ par incident en reprises et retards.',
+            problem_software: 'Logiciel d\'entreprise coûteux',
+            problem_software_desc: 'Les packages CAD comme AutoCAD Plant 3D coûtent 10 000 $+/an. Trop lourds pour un travail exclusivement sur tuyaux avec une courbe d\'apprentissage abrupte.',
+            solution_label: 'La solution',
+            solution_title: 'Des paramètres à la production en quelques minutes',
+            solution_subtitle: 'PipingCAD automatise l\'ensemble du pipeline, de la spécification des tuyaux au nesting, au G-code, aux rapports de coûts et aux fichiers DXF prêts pour la production.',
+            solution_step1: 'Entrer les paramètres du tuyau',
+            solution_step1_desc: 'Spécifiez le diamètre, l\'épaisseur, le rayon de courbure, le matériau et les normes de soudage. Notre moteur intelligent gère la géométrie complexe.',
+            solution_step2: 'Calcul analytique',
+            solution_step2_desc: 'Nos solveurs propriétaires calculent des modèles 3D précis, des courbes d\'intersection et des patrons en utilisant des méthodes mathématiques exactes.',
+            solution_step3: 'Sortie prête pour la production',
+            solution_step3_desc: 'Obtenez des fichiers DXF avec codes QR intégrés, listes de coupe et rapports de coûts. Prêts pour vos machines CNC.',
+            fitting_types: 'Raccords pris en charge',
+            fitting_types_title: '13 types de raccords',
+            fitting_subtitle: 'Toutes les géométries de raccords standard préconfigurées. Des tuyaux droits aux branches en Y complexes et transitions carré-vers-rond.',
+            fit_1_name: 'Coude standard',
+            fit_1_desc: 'Coude à segments multiples - R, angle, nombre de segments configurables',
+            fit_1b_name: 'Coude à double excentrique',
+            fit_1b_desc: 'Coude avec deux rayons de courbure différents - épaisseur de paroi variable',
+            fit_2_name: 'Té',
+            fit_2_desc: 'Intersection tuyau principal + dérivation - Angle de dérivation configurable',
+            fit_3_name: 'Cône concentrique',
+            fit_3_desc: 'Réducteur concentrique avec rapport de conicité variable',
+            fit_4_name: 'Cône excentrique',
+            fit_4_desc: 'Réducteur excentrique avec axe décalé',
+            fit_5_name: 'Carré-vers-rond',
+            fit_5_desc: 'Conduit de transition rectangulaire à circulaire',
+            fit_6_name: 'Dérivation en Y',
+            fit_6_desc: 'Deux branches à angle configurable depuis le tuyau principal',
+            fit_7_name: 'Bride',
+            fit_7_desc: 'Bride circulaire avec trous de boulons - Classe PN configurable',
+            fit_8_name: 'Tuyau droit',
+            fit_8_desc: 'Section de tuyau droit avec longueur et épaisseur configurables',
+            fit_9_name: 'Ovale plat',
+            fit_9_desc: 'Tuyau à section ovale pour ventilation et gaines',
+            fit_10_name: 'Tuyau rectangulaire',
+            fit_10_desc: 'Tuyau carré/rectangulaire avec dimensions configurables',
+            fit_11_name: 'Coude rectangulaire',
+            fit_11_desc: 'Coude pour gaine carrée/rectangulaire - Angle configurable 0-180°',
+            fit_12_name: 'Vis sans fin',
+            fit_12_desc: 'Lame hélicoïdale avec revêtement optionnel',
+            features_label: 'Capacités',
+            features_title: 'Conçu pour la précision industrielle',
+            features_subtitle: 'Chaque fonction est conçue pour réduire les déchets, éliminer les erreurs et accélérer la production.',
+            feature_library: 'Bibliothèque paramétrique',
+            feature_library_desc: 'Pièces standard ISO/ANSI complètes : coudes, tés, cônes, brides, dérivations en Y et raccords personnalisés avec paramétrage instantané.',
+            feature_intersections: 'Intersections analytiques',
+            feature_intersections_desc: 'Solutions mathématiques exactes pour les intersections de tuyaux. Aucune approximation. Précision au micron pour un ajustement parfait.',
+            feature_nesting: 'Nesting intelligent',
+            feature_nesting_desc: 'Optimisation basée sur Shapely pour maximiser l\'utilisation des tôles. Économie typique : réduction de 15 à 25 % des coûts de matériaux.',
+            feature_export: 'Export DXF + G-Code CNC',
+            feature_export_desc: 'Export DXF prêt pour la production avec sortie multicouche. Génère également du G-Code CNC pour les contrôleurs Fanuc, Amada et Trumpf.',
+            feature_costing: 'Moteur de chiffrage',
+            feature_costing_desc: 'Ventilation complète des coûts par pièce : coût des matériaux, découpe laser, cintrage, soudage, marge bénéficiaire et TVA. Génère automatiquement des factures PDF avec captures d\'écran 3D.',
+            feature_standards: 'Base de données de normes et traitement par lots',
+            feature_standards_desc: 'Base de données intégrée des normes ASME/EN pour tuyauteries. File d\'attente de tâches par lots avec niveaux de priorité, logique de nouvelle tentative et mode CLI pour l\'automatisation sans surveillance.',
+            instant_label: 'Génération instantanée',
+            instant_title: 'Génération paramétrique : des données à la fabrication en 1 seconde',
+            instant_subtitle: 'Entrez les paramètres, générez des modèles 3D précis et des patrons 2D en un clic. Aucun dessin manuel nécessaire.',
+            instant_params: 'Entrez les paramètres de la pièce...',
+            instant_preview: 'Aperçu de la démo',
+            instant_preview_title: 'Aperçu du modèle 3D',
+            instant_preview_desc: 'Patron généré avec cotation prêt pour l\'export CNC',
+            instant_caption: 'Temps réel : Modèle 3D + Patron 2D + Cotation',
+            demo_bend_label: 'Démo interactive de coude',
+            demo_bend_title: 'Démo paramétrique : ajustez instantanément tout paramètre',
+            demo_bend_subtitle: 'Chaque paramètre est entièrement ajustable - nombre de segments, rayon de courbure, épaisseur de paroi, angle et matériau. Essayez un exemple ci-dessous.',
+            demo_bend_segments: 'SEGMENTS',
+            demo_bend_try_this: 'Essayez → ',
+            nesting_label: 'Nesting intelligent',
+            nesting_title: 'Nesting irrégulier intelligent : chaque centimètre d\'acier compte',
+            nesting_subtitle: 'Quatre stratégies d\'optimisation pilotées par des algorithmes génétiques. Rotation automatique à 0/90/180/270°. Économie typique : amélioration de 15 à 25 % de l\'utilisation des matériaux.',
+            nest_utilization: '15-25% d\'économie de matériaux',
+            dashboard_label: 'Rapports de production et ADN numérique',
+            dashboard_title: 'Gestion numérique : les dessins comme données',
+            dashboard_subtitle: 'Chaque DXF transporte des rapports de production complets et un ADN numérique - scannez le code QR pour accéder à toutes les informations de processus.',
+            dashboard_preview_title: 'Nomenclature et données de processus',
+            dashboard_preview_desc: 'Généré automatiquement : numéros de pièces - matériaux - spécifications - quantités - poids - traçabilité QR',
+            demo_label: 'Voir en action',
+            demo_title: 'Regardez PipingCAD transformer votre flux de travail',
+            demo_subtitle: 'Voyez à quelle vitesse vous pouvez passer de la spécification du tuyau au fichier DXF prêt pour la production.',
+            demo_video_title: 'Vidéo de démonstration',
+            demo_video_desc: 'Voyez PipingCAD en action - des paramètres au DXF prêt à découper en secondes.<br>Contactez-nous pour une démonstration en direct.',
+            demo_cta: 'Demander une démo en direct',
+            pricing_label: 'Tarifs',
+            pricing_subtitle: "Choisissez le plan adapté à votre atelier. Mise à niveau possible.",
+            pricing_trial_title: 'Mini',
+            pricing_trial_subtitle: '6 raccords essentiels',
+            pricing_trial_price: '/an',
+pricing_trial_feat1: "6 raccords essentiels : coude, té, cône, Y, bride, tuyau",
+            pricing_trial_feat2: "Paramètres complets pour tous les types",
+            pricing_trial_feat3: "Aperçu 3D + vue à plat 2D",
+            pricing_trial_feat4: "Export DXF, sans filigrane",
+            pricing_trial_feat5: "Estimation de base des coûts",
+            pricing_trial_cta: "Acheter Mini",
+            pricing_popular_badge: 'Le plus populaire',
+            pricing_professional_title: 'Professionnel',
+            pricing_professional_subtitle: 'Pour les ateliers de fabrication et les ingénieurs',
+            pricing_professional_period: '/an',
+            pricing_professional_monthly: 'ou 499 $/mois',
+            pricing_professional_feat1: "Génération illimitée de pièces",
+            pricing_professional_feat2: "Tous les 13 raccords, paramètres complets",
+            pricing_professional_feat3: "Optimiseur de nesting intelligent (4 stratégies AG)",
+            pricing_professional_feat4: "Export DXF + STEP sans filigrane",
+            pricing_professional_feat5: "Rapport PDF + QR/ADN intégré",
+            pricing_professional_feat6: "Estimation complète des coûts",
+            pricing_professional_feat7: "File d'attente de traitement par lots",
+            pricing_professional_feat8: "Support e-mail prioritaire",
+            pricing_professional_feat9: '1 an de mises à jour',
+            pricing_professional_cta: 'Acheter Professional',
+            pricing_professional_trial: 'Demander un essai gratuit',
+            pricing_enterprise_title: 'Entreprise',
+            pricing_enterprise_subtitle: 'Pour les grandes organisations',
+            pricing_enterprise_price: 'Contactez-nous',
+            pricing_enterprise_feat1: 'Tout ce qui est inclus dans Professionnel',
+            pricing_enterprise_feat2: 'Licences multi-postes',
+            pricing_enterprise_feat3: 'Intégrations personnalisées',
+            pricing_enterprise_feat4: 'Déploiement sur site',
+            pricing_enterprise_feat5: 'Support téléphonique et sur site',
+            pricing_enterprise_feat6: 'Formation et intégration',
+            pricing_enterprise_feat7: 'Développement de fonctionnalités personnalisées',
+            pricing_enterprise_cta: 'Demander un devis',
+            faq_label: 'FAQ',
+            faq_q1: 'PipingCAD est-il difficile à apprendre ?',
+            faq_a1: 'La plupart des utilisateurs sont productifs en 2 à 3 heures. L\'interface est conçue pour les ingénieurs et les dessinateurs, avec une saisie intuitive des paramètres et un retour visuel clair.',
+            faq_q2: 'Quels formats de fichier exporte-t-il ?',
+            faq_a2: 'PipingCAD exporte le DXF (R2000+ compatible avec tous les principaux systèmes CAO), le STEP pour l\'échange de modèles 3D et les rapports de production PDF avec codes QR intégrés.',
+            faq_q3: 'Quelle est la précision des calculs ?',
+            faq_a3: 'Notre solveur de géométrie analytique atteint une précision au micron. Contrairement aux méthodes d\'approximation, nos calculs sont basés sur des solutions mathématiques exactes.',
+            faq_q4: 'Peut-il s\'intégrer à mon logiciel CAO existant ?',
+            faq_a4: 'Oui ! PipingCAD détecte automatiquement les logiciels CAO installés et peut envoyer les dessins directement dans votre espace CAO. Aucune étape d\'import/export manuelle requise.',
+            contact_label: 'Commencer',
+            contact_subtitle: 'Commencez votre essai gratuit dès aujourd\'hui ou contactez-nous pour une démo personnalisée.',
+            contact_name_label: 'Nom complet *',
+            contact_name_placeholder: 'Jean Dupont',
+            contact_email_label: 'E-mail professionnel *',
+            contact_email_placeholder: 'jean@entreprise.fr',
+            contact_company_label: 'Entreprise',
+            contact_company_placeholder: 'Votre entreprise',
+            contact_interest_label: 'Je suis intéressé par...',
+            contact_interest_trial: 'Essai gratuit',
+            contact_interest_professional: 'Licence Professionnelle',
+            contact_interest_enterprise: 'Devis Entreprise',
+            contact_interest_demo: 'Démo en direct',
+            contact_interest_question: 'Question générale',
+            contact_message_label: 'Message',
+            contact_message_placeholder: 'Parlez-nous de votre projet...',
+            contact_submit: 'Envoyer le message',
+            footer_tagline: 'Moteur de tuyauterie industrielle pour la fabrication de précision. Des paramètres à la production en secondes.',
+            pdf_title: 'Rapport de production PDF + QR Code',
+            pdf_placeholder: 'Inserer la capture d\'ecran du rapport PDF ici',
+            pdf_placeholder_sub: 'Recommande : PNG 1200x900px montrant l\'apercu du rapport',
+            pdf_inside_title: 'Ce que contient chaque rapport',
+            pdf_feat_1: 'Rendus 3D avec cotation',
+            pdf_feat_2: 'Apercu du patron avec annotations',
+            pdf_feat_3: 'Liste de coupe avec quantites',
+            pdf_feat_4: 'Code QR de tracabilite - scannez pour toutes les donnees',
+            pdf_feat_5: 'Instructions de processus et specifications de soudage',
+            pdf_caption: 'Scannez le code QR sur n\'importe quel DXF pour acceder instantanement au dossier de production complet. Aucun logiciel requis.',
+            tech_label: 'Fonctionnalités Industrielles',
+            tech_title: 'Des capacités prêtes pour la production à ne pas manquer',
+            tech_subtitle: 'Du code CNC aux rapports de coûts — chaque fonctionnalité conçue pour les flux de travail réels en usine.',
+            tech_1_title: 'Export G-Code CNC',
+            tech_1_desc: 'Prise en charge complète des contrôleurs Fanuc, Amada et Trumpf. G-code prêt pour la production avec optimisation des trajectoires d\'outil, avances et imbrication multicouche.',
+            tech_2_title: 'Moteur de chiffrage complet',
+            tech_2_desc: 'Devis détaillé : coût des matériaux, découpe laser, poinçonnage, pliage, soudage, marge bénéficiaire et TVA. Factures PDF avec captures d\'écran 3D.',
+            tech_3_title: 'Rapport de production PDF + QR',
+            tech_3_desc: 'Bien plus qu\'une nomenclature — un dossier complet avec rendus 3D, aperçu du patron, liste de coupe, code QR de traçabilité et instructions.',
+            tech_4_title: 'Traitement par lots multi-stratégies',
+            tech_4_desc: 'File d\'attente SQLite persistante avec niveaux de priorité, répétition automatique et reprise par point de contrôle. Traitez des centaines de pièces en une nuit.',
+            tech_5_title: 'Base de données de normes',
+            tech_5_desc: 'Normes de tuyauterie ASME/EN intégrées, normes de brides (PN16, WN, SO, BL, PL) et tables dimensionnelles de coudes/tés. Tout est préchargé.',
+            footer_product: 'Produit',
+            footer_features: 'Fonctionnalités',
+            footer_pricing: 'Tarifs',
+            footer_resources: 'Ressources',
+            footer_faq: 'FAQ',
+            footer_support: 'Support',
+            footer_contact_label: 'Contact',
+            footer_privacy: 'Politique de confidentialité',
+            footer_terms: 'Conditions d\'utilisation',
+        },
+        es: {
+            nav_features: 'Características',
+            nav_bend_demo: 'Demo codo',
+            nav_pricing: 'Precios',
+            nav_faq: 'FAQ',
+            nav_contact: 'Contacto',
+            hero_badge: '⚙ Motor de tuberías industriales',
+            hero_highlight: 'Forjado con precisión.',
+            hero_subtitle: 'Listo para producción.',
+            hero_slogan: 'De parámetros de tubería a DXF listo para corte en segundos. Solucionador de intersecciones analíticas · Nesting inteligente · Salida lista para producción.',
+            hero_cta_trial: 'Obtener prueba gratuita →',
+            hero_cta_demo: 'Demo interactiva',
+            problem_label: 'El problema',
+            problem_title: 'El diseño manual de tuberías está matando tus márgenes',
+            problem_subtitle: 'Los talleres de fabricación pierden miles por proyecto debido a cálculos manuales, ajustes de prueba y error, y costosos software empresariales.',
+            problem_hours: 'Horas de trabajo manual',
+            problem_hours_desc: 'Los ingenieros pasan 4-8 horas por proyecto calculando manualmente expansiones, intersecciones y creando dibujos.',
+            problem_errors: 'Costosos errores de ajuste',
+            problem_errors_desc: 'Los cálculos manuales no son perfectos. Los problemas de ajuste en campo cuestan $5,000-$50,000 por incidente en retrabajo y demoras.',
+            problem_software: 'Software empresarial costoso',
+            problem_software_desc: 'Paquetes CAD como AutoCAD Plant 3D cuestan $10,000+/año. Excesivo para trabajo solo de tuberías con curvas de aprendizaje pronunciadas.',
+            solution_label: 'La solución',
+            solution_title: 'De parámetros a producción en minutos',
+            solution_subtitle: 'PipingCAD automatiza todo el proceso, desde la especificación de tuberías hasta el nesting, código G, informes de costos y archivos DXF listos para producción.',
+            solution_step1: 'Ingresar parámetros de tubería',
+            solution_step1_desc: 'Especifique diámetro, espesor, radio de curvatura, material y estándares de soldadura. Nuestro motor inteligente maneja la geometría compleja.',
+            solution_step2: 'Cálculo analítico',
+            solution_step2_desc: 'Nuestros solucionadores propietarios calculan modelos 3D precisos, curvas de intersección y patrones planos usando métodos matemáticos exactos.',
+            solution_step3: 'Salida lista para producción',
+            solution_step3_desc: 'Obtenga archivos DXF con códigos QR incrustados, listas de corte e informes de costos. Listos para sus máquinas CNC.',
+            fitting_types: 'Accesorios admitidos',
+            fitting_types_title: '13 tipos de accesorios',
+            fitting_subtitle: 'Todas las geometrías de accesorios estándar preconfiguradas. Desde tuberías rectas hasta derivaciones en Y complejas y transiciones cuadrado a redondo.',
+            fit_1_name: 'Codo estándar',
+            fit_1_desc: 'Codo ingleteado de múltiples segmentos - R, ángulo, número de segmentos configurables',
+            fit_1b_name: 'Codo doble excéntrico',
+            fit_1b_desc: 'Codo con dos radios de curvatura diferentes - espesor de pared variable',
+            fit_2_name: 'Te',
+            fit_2_desc: 'Intersección tubería principal + derivación - Ángulo de derivación configurable',
+            fit_3_name: 'Cono concéntrico',
+            fit_3_desc: 'Reductor concéntrico con relación de conicidad variable',
+            fit_4_name: 'Cono excéntrico',
+            fit_4_desc: 'Reductor excéntrico con eje desplazado',
+            fit_5_name: 'Cuadrado a redondo',
+            fit_5_desc: 'Conducto de transición rectangular a circular',
+            fit_6_name: 'Derivación en Y',
+            fit_6_desc: 'Dos ramas en ángulo configurable desde la tubería principal',
+            fit_7_name: 'Brida',
+            fit_7_desc: 'Brida circular con agujeros para pernos - Clase PN configurable',
+            fit_8_name: 'Tubería recta',
+            fit_8_desc: 'Sección de tubería recta con longitud y espesor configurables',
+            fit_9_name: 'Óvalo plano',
+            fit_9_desc: 'Tubería de sección ovalada para ventilación y conductos',
+            fit_10_name: 'Tubería rectangular',
+            fit_10_desc: 'Tubería cuadrada/rectangular con dimensiones configurables',
+            fit_11_name: 'Codo rectangular',
+            fit_11_desc: 'Codo para conducto cuadrado/rectangular - Ángulo configurable 0-180°',
+            fit_12_name: 'Tornillo sin fin',
+            fit_12_desc: 'Aspa helicoidal con revestimiento opcional',
+            features_label: 'Capacidades',
+            features_title: 'Construido para precisión industrial',
+            features_subtitle: 'Cada función diseñada para reducir residuos, eliminar errores y acelerar la producción.',
+            feature_library: 'Biblioteca paramétrica',
+            feature_library_desc: 'Piezas estándar ISO/ANSI completas: codos, tes, conos, bridas, derivaciones en Y y accesorios personalizados con parametrización instantánea.',
+            feature_intersections: 'Intersecciones analíticas',
+            feature_intersections_desc: 'Soluciones matemáticas exactas para intersecciones de tuberías. Sin aproximaciones. Precisión a nivel de micra para un ajuste perfecto.',
+            feature_nesting: 'Nesting inteligente',
+            feature_nesting_desc: 'Optimización basada en Shapely maximiza la utilización de la chapa. Ahorro típico: reducción del 15-25% en costos de material.',
+            feature_export: 'Exportación DXF + G-Code CNC',
+            feature_export_desc: 'Exportación DXF lista para producción con salida multicapa. También genera G-Code CNC para controladores Fanuc, Amada y Trumpf.',
+            feature_costing: 'Motor de costeo',
+            feature_costing_desc: 'Desglose completo de costos por pieza: costo de material, corte láser, curvado, soldadura, margen de beneficio e IVA. Genera automáticamente facturas PDF con capturas de pantalla 3D.',
+            feature_standards: 'Base de datos de normas y procesamiento por lotes',
+            feature_standards_desc: 'Base de datos integrada de normas ASME/EN para tuberías. Cola de tareas por lotes con niveles de prioridad, lógica de reintento y modo CLI para automatización sin supervisión.',
+            instant_label: 'Generación instantánea',
+            instant_title: 'Generación paramétrica: de datos a fabricación en 1 segundo',
+            instant_subtitle: 'Ingrese parámetros, genere modelos 3D precisos y patrones planos 2D con un clic. Sin necesidad de dibujo manual.',
+            instant_params: 'Ingrese parámetros de pieza...',
+            instant_preview: 'Demo de previsualización',
+            instant_preview_title: 'Vista previa del modelo 3D',
+            instant_preview_desc: 'Patrón plano generado con dimensionamiento listo para exportación CNC',
+            instant_caption: 'Tiempo real: Modelo 3D + Patrón plano 2D + Dimensionamiento',
+            demo_bend_label: 'Demo interactiva de codo',
+            demo_bend_title: 'Demo paramétrica: ajuste instantáneo de cualquier parámetro',
+            demo_bend_subtitle: 'Cada parámetro es completamente ajustable: número de segmentos, radio de curvatura, espesor de pared, ángulo y material. Pruebe un ejemplo a continuación.',
+            demo_bend_segments: 'SEGMENTOS',
+            demo_bend_try_this: 'Prueba → ',
+            nesting_label: 'Nesting inteligente',
+            nesting_title: 'Nesting irregular inteligente: cada centímetro de acero cuenta',
+            nesting_subtitle: 'Cuatro estrategias de optimización impulsadas por algoritmos genéticos. Rotación automática a 0/90/180/270°. Ahorro típico: mejora del 15-25% en utilización de material.',
+            nest_utilization: '15-25% de ahorro de material',
+            dashboard_label: 'Informes de producción y ADN digital',
+            dashboard_title: 'Gestión digital: dibujos como datos',
+            dashboard_subtitle: 'Cada DXF lleva informes de producción completos y ADN digital: escanee el código QR para acceder a toda la información del proceso.',
+            dashboard_preview_title: 'Lista de materiales y datos de proceso',
+            dashboard_preview_desc: 'Generado automáticamente: números de pieza - materiales - especificaciones - cantidades - pesos - trazabilidad QR',
+            demo_label: 'Ver en acción',
+            demo_title: 'Vea cómo PipingCAD transforma su flujo de trabajo',
+            demo_subtitle: 'Vea qué tan rápido puede pasar de la especificación de tubería al archivo DXF listo para producción.',
+            demo_video_title: 'Video de demostración',
+            demo_video_desc: 'Vea PipingCAD en acción: de parámetros a DXF listo para corte en segundos.<br>Contáctenos para una demostración en vivo.',
+            demo_cta: 'Solicitar demo en vivo',
+            pricing_label: 'Precios',
+            pricing_subtitle: 'Elija el plan adecuado. Mejore cuando quiera.',
+            pricing_trial_title: 'Mini',
+            pricing_trial_subtitle: '6 accesorios esenciales',
+            pricing_trial_price: '/año',
+            pricing_trial_feat1: '6 accesorios: codo, tee, cono, Y, brida, tubo',
+            pricing_trial_feat2: 'Parámetros completos ajustables',
+            pricing_trial_feat3: 'Vista previa 3D + vista plana 2D',
+            pricing_trial_feat4: 'Exportación DXF sin marca de agua',
+            pricing_trial_feat5: 'Estimación básica de costos',
+            pricing_trial_cta: 'Comprar Mini',
+            pricing_popular_badge: 'Más popular',
+            pricing_professional_title: 'Profesional',
+            pricing_professional_subtitle: 'Para talleres de fabricación e ingenieros',
+            pricing_professional_period: '/año',
+            pricing_professional_monthly: 'o $499/mes',
+            pricing_professional_feat1: 'Generación ilimitada de piezas',
+            pricing_professional_feat2: 'Los 13 tipos de accesorios, parámetros completos',
+            pricing_professional_feat3: 'Optimizador de nesting inteligente (4 estrategias GA)',
+            pricing_professional_feat4: 'Exportación DXF + STEP sin marca de agua',
+            pricing_professional_feat5: 'Informe PDF + incrustación QR/ADN',
+            pricing_professional_feat6: 'Estimación completa de costos',
+            pricing_professional_feat7: 'Cola de procesamiento por lotes',
+            pricing_professional_feat8: 'Soporte prioritario por correo',
+            pricing_professional_feat9: '1 año de actualizaciones',
+            pricing_professional_cta: 'Comprar Professional',
+            pricing_professional_trial: 'Solicitar prueba',
+            pricing_enterprise_title: 'Empresa',
+            pricing_enterprise_subtitle: 'Para grandes organizaciones',
+            pricing_enterprise_price: 'Contáctenos',
+            pricing_enterprise_feat1: 'Todo lo de Profesional',
+            pricing_enterprise_feat2: 'Licencias multi-puesto',
+            pricing_enterprise_feat3: 'Integraciones personalizadas',
+            pricing_enterprise_feat4: 'Implementación on-premise',
+            pricing_enterprise_feat5: 'Soporte telefónico y en sitio',
+            pricing_enterprise_feat6: 'Capacitación e incorporación',
+            pricing_enterprise_feat7: 'Desarrollo de funciones personalizadas',
+            pricing_enterprise_cta: 'Solicitar cotización',
+            faq_label: 'FAQ',
+            faq_q1: '¿Es difícil aprender PipingCAD?',
+            faq_a1: 'La mayoría de los usuarios son productivos en 2-3 horas. La interfaz está diseñada para ingenieros y dibujantes, con entrada de parámetros intuitiva y retroalimentación visual clara.',
+            faq_q2: '¿Qué formatos de archivo exporta?',
+            faq_a2: 'PipingCAD exporta DXF (R2000+ compatible con todos los sistemas CAD principales), STEP para intercambio de modelos 3D e informes de producción PDF con códigos QR incrustados.',
+            faq_q3: '¿Qué tan precisos son los cálculos?',
+            faq_a3: 'Nuestro solucionador de geometría analítica logra precisión a nivel de micra. A diferencia de los métodos de aproximación, nuestros cálculos se basan en soluciones matemáticas exactas.',
+            faq_q4: '¿Puede integrarse con mi software CAD existente?',
+            faq_a4: '¡Sí! PipingCAD detecta automáticamente el software CAD instalado y puede enviar dibujos directamente a su espacio CAD. Sin pasos de importación/exportación manuales.',
+            contact_label: 'Comenzar',
+            contact_subtitle: 'Comience su prueba gratuita hoy o contáctenos para una demostración personalizada.',
+            contact_name_label: 'Nombre completo *',
+            contact_name_placeholder: 'Juan García',
+            contact_email_label: 'Correo electrónico laboral *',
+            contact_email_placeholder: 'juan@empresa.com',
+            contact_company_label: 'Empresa',
+            contact_company_placeholder: 'Su empresa',
+            contact_interest_label: 'Estoy interesado en...',
+            contact_interest_trial: 'Prueba gratuita',
+            contact_interest_professional: 'Licencia Profesional',
+            contact_interest_enterprise: 'Cotización Empresarial',
+            contact_interest_demo: 'Demo en vivo',
+            contact_interest_question: 'Consulta general',
+            contact_message_label: 'Mensaje',
+            contact_message_placeholder: 'Cuéntenos sobre su proyecto...',
+            contact_submit: 'Enviar mensaje',
+            footer_tagline: 'Motor de tuberías de grado industrial para fabricación de precisión. De parámetros a producción en segundos.',
+            pdf_title: 'Informe de produccion PDF + Codigo QR',
+            pdf_placeholder: 'Insertar captura de pantalla del informe PDF aqui',
+            pdf_placeholder_sub: 'Recomendado: PNG 1200x900px mostrando vista previa del informe',
+            pdf_inside_title: 'Que contiene cada informe',
+            pdf_feat_1: 'Representaciones 3D con acotacion',
+            pdf_feat_2: 'Vista previa del patron con anotaciones',
+            pdf_feat_3: 'Lista de corte con cantidades',
+            pdf_feat_4: 'Codigo QR de trazabilidad - escanee para todos los datos',
+            pdf_feat_5: 'Instrucciones de proceso y especificaciones de soldadura',
+            pdf_caption: 'Escanee el codigo QR en cualquier DXF para acceder instantaneamente al dossier de produccion completo. Sin necesidad de software.',
+            tech_label: 'Características Industriales',
+            tech_title: 'Capacidades listas para producción que no puede perderse',
+            tech_subtitle: 'Del código CNC a los informes de costos — cada función diseñada para flujos de trabajo reales de fábrica.',
+            tech_1_title: 'Exportación de G-Code CNC',
+            tech_1_desc: 'Soporte completo para controladores Fanuc, Amada y Trumpf. G-code listo para producción con optimización de trayectorias, velocidades de avance y anidamiento multicapa.',
+            tech_2_title: 'Motor de costeo completo',
+            tech_2_desc: 'Desglose detallado: costo de material, corte láser, punzonado, plegado, soldadura, margen de beneficio e IVA. Facturas PDF con capturas de pantalla 3D.',
+            tech_3_title: 'Informe de producción PDF + QR',
+            tech_3_desc: 'Más que una lista de materiales — un expediente completo con representaciones 3D, vista previa del patrón, lista de corte y código QR de trazabilidad.',
+            tech_4_title: 'Procesamiento por lotes multiestrategia',
+            tech_4_desc: 'Cola de tareas persistente SQLite con niveles de prioridad, reintento automático y reanudación por punto de control. Procese cientos de piezas durante la noche.',
+            tech_5_title: 'Base de datos de normas',
+            tech_5_desc: 'Normas de tubería ASME/EN integradas, normas de bridas (PN16, WN, SO, BL, PL) y tablas dimensionales de codos/tes. Todo precargado.',
+            footer_product: 'Producto',
+            footer_features: 'Características',
+            footer_pricing: 'Precios',
+            footer_resources: 'Recursos',
+            footer_faq: 'FAQ',
+            footer_support: 'Soporte',
+            footer_contact_label: 'Contacto',
+            footer_privacy: 'Política de privacidad',
+            footer_terms: 'Términos del servicio',
+        },
+        ru: {
+            nav_features: 'Возможности',
+            nav_bend_demo: 'Демо отвода',
+            nav_pricing: 'Цены',
+            nav_faq: 'ЧАВО',
+            nav_contact: 'Контакты',
+            hero_badge: '⚙ Промышленный трубопроводный движок',
+            hero_highlight: 'Точная ковка.',
+            hero_subtitle: 'Готово к производству.',
+            hero_slogan: 'От параметров трубы до готового к резке DXF за секунды. Аналитический решатель пересечений · Интеллектуальный раскрой · Готовый к производству вывод.',
+            hero_cta_trial: 'Получить пробную версию →',
+            hero_cta_demo: 'Интерактивная демо',
+            problem_label: 'Проблема',
+            problem_title: 'Ручное проектирование трубопроводов съедает вашу прибыль',
+            problem_subtitle: 'Производственные цеха теряют тысячи на каждом проекте из-за ручных расчетов, подгонки методом проб и ошибок и дорогого корпоративного ПО.',
+            problem_hours: 'Часы ручной работы',
+            problem_hours_desc: 'Инженеры тратят 4-8 часов на проект на ручные расчеты разверток, пересечений и создание чертежей.',
+            problem_errors: 'Дорогостоящие ошибки подгонки',
+            problem_errors_desc: 'Ручные расчеты неидеальны. Проблемы с подгонкой на месте стоят $5,000-$50,000 за инцидент из-за переделок и задержек.',
+            problem_software: 'Дорогое корпоративное ПО',
+            problem_software_desc: 'CAD-пакеты вроде AutoCAD Plant 3D стоят $10,000+/год. Избыточно для работы только с трубами с крутой кривой обучения.',
+            solution_label: 'Решение',
+            solution_title: 'От параметров к производству за минуты',
+            solution_subtitle: 'PipingCAD автоматизирует весь конвейер от спецификации труб до раскроя, G-кода, отчетов о затратах и готовых к производству DXF-файлов.',
+            solution_step1: 'Введите параметры трубы',
+            solution_step1_desc: 'Укажите диаметр, толщину, радиус изгиба, материал и стандарты сварки. Наш интеллектуальный движок обрабатывает сложную геометрию.',
+            solution_step2: 'Аналитический расчет',
+            solution_step2_desc: 'Наши собственные решатели вычисляют точные 3D-модели, кривые пересечения и плоские развертки, используя точные математические методы.',
+            solution_step3: 'Готовый к производству вывод',
+            solution_step3_desc: 'Получите DXF-файлы со встроенными QR-кодами, списками резки и отчетами о затратах. Готовы для ваших станков с ЧПУ.',
+            fitting_types: 'Поддерживаемые фитинги',
+            fitting_types_title: '13 типов фитингов',
+            fitting_subtitle: 'Все стандартные геометрии трубных фитингов предварительно настроены. От прямых труб до сложных Y-образных ответвлений и переходов квадрат-к-кругу.',
+            fit_1_name: 'Стандартный отвод',
+            fit_1_desc: 'Многосегментный сварной - Настраиваемый R, угол, количество сегментов',
+            fit_1b_name: 'Двойной эксцентрический отвод',
+            fit_1b_desc: 'Отвод с двумя разными радиусами изгиба - переменная толщина стенки',
+            fit_2_name: 'Тройник',
+            fit_2_desc: 'Пересечение основной + ответвляемой трубы - Настраиваемый угол ответвления',
+            fit_3_name: 'Концентрический конус',
+            fit_3_desc: 'Концентрический переход с переменным коэффициентом сужения',
+            fit_4_name: 'Эксцентрический конус',
+            fit_4_desc: 'Эксцентрический переход со смещенной центральной линией',
+            fit_5_name: 'Квадрат-к-кругу',
+            fit_5_desc: 'Прямоугольный-к-круглому переходной канал',
+            fit_6_name: 'Y-образное ответвление',
+            fit_6_desc: 'Два ответвления под настраиваемым углом от основной трубы',
+            fit_7_name: 'Фланец',
+            fit_7_desc: 'Круглый фланец с отверстиями под болты - Настраиваемый PN-класс',
+            fit_8_name: 'Прямая труба',
+            fit_8_desc: 'Прямой участок трубы с настраиваемой длиной и толщиной стенки',
+            fit_9_name: 'Плоский овал',
+            fit_9_desc: 'Труба овального сечения для вентиляции и воздуховодов',
+            fit_10_name: 'Прямоугольная труба',
+            fit_10_desc: 'Квадратная/прямоугольная труба с настраиваемыми размерами',
+            fit_11_name: 'Прямоугольный отвод',
+            fit_11_desc: 'Отвод для квадратного/прямоугольного воздуховода - Настраиваемый угол 0-180°',
+            fit_12_name: 'Винтовой шнек',
+            fit_12_desc: 'Спиральная лопасть шнека с дополнительной футеровкой',
+            features_label: 'Возможности',
+            features_title: 'Создано для промышленной точности',
+            features_subtitle: 'Каждая функция предназначена для сокращения отходов, устранения ошибок и ускорения производства.',
+            feature_library: 'Параметрическая библиотека',
+            feature_library_desc: 'Полные стандартные детали ISO/ANSI: отводы, тройники, конусы, фланцы, Y-образные ответвления и пользовательские фитинги с мгновенной параметризацией.',
+            feature_intersections: 'Аналитические пересечения',
+            feature_intersections_desc: 'Точные математические решения для пересечений труб. Без аппроксимаций. Микронная точность для идеальной подгонки.',
+            feature_nesting: 'Интеллектуальный раскрой',
+            feature_nesting_desc: 'Оптимизация на базе Shapely максимизирует использование листа. Типичная экономия: снижение затрат на материалы на 15-25%.',
+            feature_export: 'Экспорт DXF + G-код ЧПУ',
+            feature_export_desc: 'Экспорт готового к производству DXF с многослойным выводом. Также генерирует G-код ЧПУ для контроллеров Fanuc, Amada и Trumpf.',
+            feature_costing: 'Движок расчета стоимости',
+            feature_costing_desc: 'Полная разбивка затрат на деталь: стоимость материала, лазерная резка, гибка, сварка, маржа прибыли и НДС. Автоматически генерирует PDF-счета с 3D-скриншотами.',
+            feature_standards: 'База данных стандартов и пакетная обработка',
+            feature_standards_desc: 'Встроенная база данных стандартов ASME/EN для труб. Очередь пакетных задач с уровнями приоритета, логикой повторных попыток и режимом CLI для автоматизации без участия оператора.',
+            instant_label: 'Мгновенная генерация',
+            instant_title: 'Параметрическая генерация: от данных к производству за 1 секунду',
+            instant_subtitle: 'Введите параметры, создайте точные 3D-модели и 2D-развертки одним кликом. Ручное черчение не требуется.',
+            instant_params: 'Введите параметры детали...',
+            instant_preview: 'Посмотреть демо',
+            instant_preview_title: 'Просмотр 3D-модели',
+            instant_preview_desc: 'Сгенерированная развертка с размерами, готовая к экспорту ЧПУ',
+            instant_caption: 'В реальном времени: 3D-модель + 2D-развертка + простановка размеров',
+            demo_bend_label: 'Интерактивная демо отвода',
+            demo_bend_title: 'Параметрическая демо: мгновенная настройка любого параметра',
+            demo_bend_subtitle: 'Каждый параметр полностью настраивается - количество сегментов, радиус изгиба, толщина стенки, угол и материал. Попробуйте пример ниже.',
+            demo_bend_segments: 'СЕГМЕНТЫ',
+            demo_bend_try_this: 'Попробуй → ',
+            nesting_label: 'Интеллектуальный раскрой',
+            nesting_title: 'Интеллектуальный нерегулярный раскрой: каждый сантиметр стали на счету',
+            nesting_subtitle: 'Четыре стратегии оптимизации на основе генетических алгоритмов. Автоматический поворот на 0/90/180/270°. Типичная экономия: повышение использования материала на 15-25%.',
+            nest_utilization: '15-25% экономии материала',
+            dashboard_label: 'Производственные отчеты и цифровая ДНК',
+            dashboard_title: 'Цифровое управление: чертежи как данные',
+            dashboard_subtitle: 'Каждый DXF несет полные производственные отчеты и цифровую ДНК - отсканируйте QR-код для доступа ко всей технологической информации.',
+            dashboard_preview_title: 'Спецификация и технологические данные',
+            dashboard_preview_desc: 'Автоматически генерируется: номера деталей - материалы - спецификации - количества - веса - QR-отслеживаемость',
+            demo_label: 'Увидеть в действии',
+            demo_title: 'Посмотрите, как PipingCAD преобразует ваш рабочий процесс',
+            demo_subtitle: 'Узнайте, как быстро можно перейти от спецификации трубы к готовому к производству DXF-файлу.',
+            demo_video_title: 'Видео демонстрации',
+            demo_video_desc: 'Увидьте PipingCAD в действии - от параметров до готового к резке DXF за секунды.<br>Свяжитесь с нами для живого просмотра.',
+            demo_cta: 'Запросить живую демонстрацию',
+            pricing_label: 'Цены',
+            pricing_subtitle: 'Выберите подходящий план. Обновите в любое время.',
+            pricing_trial_title: 'Mini',
+            pricing_trial_subtitle: '6 основных фитингов',
+            pricing_trial_price: '/год',
+            pricing_trial_feat1: '6 фитингов: отвод, тройник, конус, Y-ответвление, фланец, труба',
+            pricing_trial_feat2: 'Полная настройка параметров',
+            pricing_trial_feat3: '3D-просмотр + 2D-развертка',
+            pricing_trial_feat4: 'Экспорт DXF без водяного знака',
+            pricing_trial_feat5: 'Базовая оценка стоимости',
+            pricing_trial_cta: 'Купить Mini',
+            pricing_popular_badge: 'Самый популярный',
+            pricing_professional_title: 'Профессиональный',
+            pricing_professional_subtitle: 'Для производственных цехов и инженеров',
+            pricing_professional_period: '/год',
+            pricing_professional_monthly: 'или $499/мес',
+            pricing_professional_feat1: 'Неограниченная генерация деталей',
+            pricing_professional_feat2: 'Все 13 типов фитингов, полные параметры',
+            pricing_professional_feat3: 'Интеллектуальный оптимизатор раскроя (4 стратегии GA)',
+            pricing_professional_feat4: 'Экспорт DXF + STEP без водяного знака',
+            pricing_professional_feat5: 'PDF-отчет + встраивание QR/ДНК',
+            pricing_professional_feat6: 'Полная оценка стоимости',
+            pricing_professional_feat7: 'Очередь пакетной обработки',
+            pricing_professional_feat8: 'Приоритетная поддержка по email',
+            pricing_professional_feat9: '1 год обновлений',
+            pricing_professional_cta: 'Купить Professional',
+            pricing_professional_trial: 'Запросить пробную версию',
+            pricing_enterprise_title: 'Корпоративный',
+            pricing_enterprise_subtitle: 'Для крупных организаций',
+            pricing_enterprise_price: 'Свяжитесь с нами',
+            pricing_enterprise_feat1: 'Всё из Профессионального',
+            pricing_enterprise_feat2: 'Многопользовательское лицензирование',
+            pricing_enterprise_feat3: 'Пользовательские интеграции',
+            pricing_enterprise_feat4: 'Развертывание на собственных серверах',
+            pricing_enterprise_feat5: 'Телефонная и выездная поддержка',
+            pricing_enterprise_feat6: 'Обучение и ввод в эксплуатацию',
+            pricing_enterprise_feat7: 'Разработка пользовательских функций',
+            pricing_enterprise_cta: 'Запросить предложение',
+            faq_label: 'ЧАВО',
+            faq_q1: 'Сложно ли освоить PipingCAD?',
+            faq_a1: 'Большинство пользователей начинают продуктивно работать в течение 2-3 часов. Интерфейс разработан для инженеров и чертежников с интуитивным вводом параметров и четкой визуальной обратной связью.',
+            faq_q2: 'Какие форматы файлов экспортируются?',
+            faq_a2: 'PipingCAD экспортирует DXF (R2000+ совместим со всеми основными CAD-системами), STEP для обмена 3D-моделями и PDF-отчеты о производстве со встроенными QR-кодами.',
+            faq_q3: 'Насколько точны расчеты?',
+            faq_a3: 'Наш решатель аналитической геометрии достигает микронной точности. В отличие от методов аппроксимации, наши расчеты основаны на точных математических решениях.',
+            faq_q4: 'Может ли он интегрироваться с моим существующим CAD-ПО?',
+            faq_a4: 'Да! PipingCAD автоматически обнаруживает установленное CAD-ПО и может отправлять чертежи непосредственно в ваше CAD-пространство. Ручные шаги импорта/экспорта не требуются.',
+            contact_label: 'Начать',
+            contact_subtitle: 'Начните бесплатную пробную версию сегодня или свяжитесь с нами для персонализированной демонстрации.',
+            contact_name_label: 'Полное имя *',
+            contact_name_placeholder: 'Иван Петров',
+            contact_email_label: 'Рабочий email *',
+            contact_email_placeholder: 'ivan@company.ru',
+            contact_company_label: 'Компания',
+            contact_company_placeholder: 'Ваша компания',
+            contact_interest_label: 'Я заинтересован в...',
+            contact_interest_trial: 'Бесплатная пробная версия',
+            contact_interest_professional: 'Профессиональная лицензия',
+            contact_interest_enterprise: 'Корпоративное предложение',
+            contact_interest_demo: 'Живая демонстрация',
+            contact_interest_question: 'Общий вопрос',
+            contact_message_label: 'Сообщение',
+            contact_message_placeholder: 'Расскажите о вашем проекте...',
+            contact_submit: 'Отправить сообщение',
+            footer_tagline: 'Промышленный трубопроводный движок для точного производства. От параметров к производству за секунды.',
+            pdf_title: 'PDF-otchet + QR-kod',
+            pdf_placeholder: 'Vstav\'te skrinshot PDF-otcheta zdes\'',
+            pdf_placeholder_sub: 'Rekomenduetsya: PNG 1200x900px s predprosmotrom otcheta',
+            pdf_inside_title: 'Chto soderzhit kazhdyj otchet',
+            pdf_feat_1: '3D-rendery s razmerami',
+            pdf_feat_2: 'Predprosmotr razvertki s annotatsiyami',
+            pdf_feat_3: 'Spisok rezki s kolichestvami',
+            pdf_feat_4: 'QR-kod otslezhivaniya - skanirujte dlya vsekh dannykh',
+            pdf_feat_5: 'Tekhnologicheskie instruktsii i spetsifikatsii svarki',
+            pdf_caption: 'Otskanirujte QR-kod na lyubom DXF, chtoby mgnovenno poluchit\' dostup k polnomu proizvodstvennomu dos\'e. Bez programmnogo obespecheniya.',
+            tech_label: 'Промышленные возможности',
+            tech_title: 'Производственные возможности, которые нельзя упустить',
+            tech_subtitle: 'От G-кода до отчетов о затратах — каждая функция создана для реальных заводских процессов.',
+            tech_1_title: 'Экспорт G-кода ЧПУ',
+            tech_1_desc: 'Полная поддержка контроллеров Fanuc, Amada и Trumpf. Производственный G-код с оптимизацией траекторий инструмента, скоростями подачи и многослойным гнездованием.',
+            tech_2_title: 'Полный расчет затрат',
+            tech_2_desc: 'Детальная смета: стоимость материалов, лазерная резка, пробивка, гибка, сварка, прибыль и НДС. Автоматические PDF-счета с 3D-скриншотами.',
+            tech_3_title: 'PDF-отчет + QR-код',
+            tech_3_desc: 'Не просто спецификация — полное досье с 3D-рендерами, предпросмотром развертки, списком резки и QR-кодом для отслеживания.',
+            tech_4_title: 'Многостратегическая пакетная обработка',
+            tech_4_desc: 'Постоянная очередь задач SQLite с приоритетами, автоматическими повторными попытками и возобновлением с контрольной точки. Обработка сотен деталей за ночь.',
+            tech_5_title: 'База данных стандартов',
+            tech_5_desc: 'Встроенные стандарты труб ASME/EN, стандарты фланцев (PN16, WN, SO, BL, PL) и таблицы размеров отводов/тройников. Все предварительно загружено.',
+            footer_product: 'Продукт',
+            footer_features: 'Возможности',
+            footer_pricing: 'Цены',
+            footer_resources: 'Ресурсы',
+            footer_faq: 'ЧАВО',
+            footer_support: 'Поддержка',
+            footer_contact_label: 'Контакты',
+            footer_privacy: 'Политика конфиденциальности',
+            footer_terms: 'Условия использования',
+        },
+        ja: {
+            nav_features: '機能',
+            nav_bend_demo: 'エルボデモ',
+            nav_pricing: '価格',
+            nav_faq: 'よくある質問',
+            nav_contact: 'お問い合わせ',
+            hero_badge: '⚙ 産業用配管エンジン',
+            hero_highlight: '精密に鍛えられた。',
+            hero_subtitle: '生産準備完了。',
+            hero_slogan: '配管パラメータから切断準備完了のDXFまで数秒。解析的交差ソルバー · インテリジェントネスティング · 生産準備完了出力。',
+            hero_cta_trial: '無料トライアルを入手 →',
+            hero_cta_demo: 'インタラクティブデモ',
+            problem_label: '問題',
+            problem_title: '手動配管設計が利益を奪っている',
+            problem_subtitle: '製造現場は手動計算、試行錯誤のフィッティング、高価なエンタープライズソフトウェアにより、プロジェクトごとに数千ドルを失っています。',
+            problem_hours: '数時間の手作業',
+            problem_hours_desc: 'エンジニアはプロジェクトごとに4〜8時間を手動での展開計算、交差計算、図面作成に費やしています。',
+            problem_errors: '高コストなフィットエラー',
+            problem_errors_desc: '手動計算は完璧ではありません。現場でのフィット問題は、手直しと遅延で1件あたり$5,000〜$50,000のコストが発生します。',
+            problem_software: '高価なエンタープライズソフトウェア',
+            problem_software_desc: 'AutoCAD Plant 3DなどのCADパッケージは年間$10,000+。配管のみの作業には過剰で、学習曲線も急です。',
+            solution_label: 'ソリューション',
+            solution_title: 'パラメータから生産まで数分',
+            solution_subtitle: 'PipingCADは、配管仕様からネスティング、Gコード、コストレポート、生産準備完了のDXFファイルまで、全体のパイプラインを自動化します。',
+            solution_step1: '配管パラメータを入力',
+            solution_step1_desc: '直径、肉厚、曲げ半径、材質、溶接規格を指定。インテリジェントエンジンが複雑な形状を処理します。',
+            solution_step2: '解析計算',
+            solution_step2_desc: '独自のソルバーが、正確な数学的手法を使用して精密な3Dモデル、交差曲線、展開図を計算します。',
+            solution_step3: '生産準備完了出力',
+            solution_step3_desc: '埋め込みQRコード、切断リスト、コストレポート付きのDXFファイルを取得。CNC機械ですぐに使用できます。',
+            fitting_types: '対応フィッティング',
+            fitting_types_title: '13種類のフィッティング',
+            fitting_subtitle: 'すべての標準配管継手形状がプリコンフィギュレーション済み。直管から複雑なY分岐、角丸遷移まで。',
+            fit_1_name: '標準エルボ',
+            fit_1_desc: '多セグメントマイター - R、角度、セグメント数設定可能',
+            fit_1b_name: '複合偏心エルボ',
+            fit_1b_desc: '2つの異なる曲げ半径を持つエルボ - 可変肉厚',
+            fit_2_name: 'ティー',
+            fit_2_desc: '主管+分岐管交差 - 分岐角度設定可能',
+            fit_3_name: '同心コーン',
+            fit_3_desc: '可変テーパー比の同心レジューサー',
+            fit_4_name: '偏心コーン',
+            fit_4_desc: '中心線オフセット付き偏心レジューサー',
+            fit_5_name: '角丸遷移',
+            fit_5_desc: '矩形から円形への遷移ダクト',
+            fit_6_name: 'Y分岐',
+            fit_6_desc: '主管から設定可能な角度の2本の脚',
+            fit_7_name: 'フランジ',
+            fit_7_desc: 'ボルト穴付き円形フランジ - PN定格設定可能',
+            fit_8_name: '直管',
+            fit_8_desc: '長さと肉厚が設定可能な直管セクション',
+            fit_9_name: '扁平楕円管',
+            fit_9_desc: '換気およびダクト用の楕円断面管',
+            fit_10_name: '矩形管',
+            fit_10_desc: '寸法設定可能な正方形/長方形ダクト',
+            fit_11_name: '矩形エルボ',
+            fit_11_desc: '正方形/長方形ダクトエルボ - 角度0-180°設定可能',
+            fit_12_name: 'スクリューフライト',
+            fit_12_desc: 'オプションのライナー付きらせんオーガブレード',
+            features_label: '機能',
+            features_title: '産業精度のために構築',
+            features_subtitle: '無駄を減らし、エラーを排除し、生産を加速するために設計されたすべての機能。',
+            feature_library: 'パラメトリックライブラリ',
+            feature_library_desc: '完全なISO/ANSI標準部品：エルボ、ティー、コーン、フランジ、Y分岐、およびカスタムフィッティング、即時パラメータ化。',
+            feature_intersections: '解析的交差',
+            feature_intersections_desc: '配管交差の正確な数学的解。近似値なし。ミクロン精度の完璧なフィットを保証。',
+            feature_nesting: 'インテリジェントネスティング',
+            feature_nesting_desc: 'Shapelyベースの最適化で板材利用率を最大化。典型的な節約：材料費15-25%削減。',
+            feature_export: 'DXF + CNC Gコードエクスポート',
+            feature_export_desc: 'マルチレイヤー出力の生産準備完了DXFをエクスポート。Fanuc、Amada、Trumpfコントローラー用のCNC Gコードも生成。',
+            feature_costing: 'コスト計算エンジン',
+            feature_costing_desc: '部品ごとの完全なコスト内訳：材料費、レーザー切断、曲げ、溶接、利益率、消費税。3Dスクリーンショット付きのPDF請求書を自動生成。',
+            feature_standards: '規格データベースとバッチ処理',
+            feature_standards_desc: '内蔵ASME/EN配管規格データベース。優先度レベル、再試行ロジック、CLIモード（無人自動化）付きのバッチタスクキュー。',
+            instant_label: '即時生成',
+            instant_title: 'パラメトリック生成：1秒でデータから製造へ',
+            instant_subtitle: 'パラメータを入力し、1クリックで正確な3Dモデルと2D展開図を生成。手動製図は不要。',
+            instant_params: '部品パラメータを入力...',
+            instant_preview: 'プレビューデモ',
+            instant_preview_title: '3Dモデルプレビュー',
+            instant_preview_desc: 'CNCエクスポート準備完了の展開図（寸法付き）',
+            instant_caption: 'リアルタイム：3Dモデル + 2D展開図 + 寸法記入',
+            demo_bend_label: 'インタラクティブエルボデモ',
+            demo_bend_title: 'パラメトリックデモ：すべてのパラメータを即時調整',
+            demo_bend_subtitle: 'すべてのパラメータは完全に調整可能 - セグメント数、曲げ半径、肉厚、角度、材質。以下の例をお試しください。',
+            demo_bend_segments: 'セグメント',
+            demo_bend_try_this: '試す → ',
+            nesting_label: 'インテリジェントネスティング',
+            nesting_title: 'インテリジェント不規則ネスティング：すべての鋼材が貴重',
+            nesting_subtitle: '遺伝的アルゴリズムによる4つの最適化戦略。0/90/180/270°での自動回転。典型的な節約：材料利用率15-25%向上。',
+            nest_utilization: '15-25%の材料節約',
+            dashboard_label: '生産レポートとデジタルDNA',
+            dashboard_title: 'デジタル管理：図面をデータとして',
+            dashboard_subtitle: 'すべてのDXFは完全な生産レポートとデジタルDNAを保持 - QRコードをスキャンしてすべてのプロセス情報にアクセス。',
+            dashboard_preview_title: 'BOMとプロセスデータ',
+            dashboard_preview_desc: '自動生成：部品番号 - 材料 - 仕様 - 数量 - 重量 - QRトレーサビリティ',
+            demo_label: '動作を見る',
+            demo_title: 'PipingCADがワークフローを変革する様子をご覧ください',
+            demo_subtitle: '配管仕様から生産準備完了のDXFファイルまで、いかに迅速に進むかご確認ください。',
+            demo_video_title: 'デモビデオ',
+            demo_video_desc: 'PipingCADの動作をご覧ください - パラメータから切断準備完了のDXFまで数秒。<br>ライブウォークスルーについてはお問い合わせください。',
+            demo_cta: 'ライブデモをリクエスト',
+            pricing_label: '価格',
+            pricing_subtitle: 'あなたの工場に合ったプランを選んでください。いつでもアップグレード可能。',
+            pricing_trial_title: 'Mini',
+            pricing_trial_subtitle: '6つの基本継手',
+            pricing_trial_price: '/年',
+            pricing_trial_feat1: '6継手：エルボ、ティー、コーン、Y分岐、フランジ、パイプ',
+            pricing_trial_feat2: '全パラメータ調整可能',
+            pricing_trial_feat3: '3Dプレビュー + 2D展開図',
+            pricing_trial_feat4: 'DXFエクスポート、透かしなし',
+            pricing_trial_feat5: '基本コスト見積り',
+            pricing_trial_cta: 'Miniを購入',
+            pricing_popular_badge: '最も人気',
+            pricing_professional_title: 'プロフェッショナル',
+            pricing_professional_subtitle: '製造工場とエンジニア向け',
+            pricing_professional_period: '/年',
+            pricing_professional_feat1: '無制限の部品生成',
+            pricing_professional_feat2: '全13種の継手、全パラメータ利用可能',
+            pricing_professional_feat3: 'スマートネスティング最適化（4種類のGA戦略）',
+            pricing_professional_feat4: '透かしなしDXF + STEPエクスポート',
+            pricing_professional_feat5: 'PDFレポート + QR/DNA埋め込み',
+            pricing_professional_feat6: '完全なコスト見積り',
+            pricing_professional_feat7: 'バッチ処理キュー',
+            pricing_professional_feat8: '優先メールサポート',
+            pricing_professional_feat9: '1年間のアップデート',
+            pricing_professional_cta: 'Professionalを購入',
+            pricing_professional_trial: '試用を申し込む',
+            pricing_enterprise_title: 'エンタープライズ',
+            pricing_enterprise_subtitle: '大規模組織向け',
+            pricing_enterprise_price: 'お問い合わせください',
+            pricing_enterprise_feat1: 'プロフェッショナルのすべてを含む',
+            pricing_enterprise_feat2: 'マルチシートライセンス',
+            pricing_enterprise_feat3: 'カスタム統合',
+            pricing_enterprise_feat4: 'オンプレミス展開',
+            pricing_enterprise_feat5: '電話およびオンサイトサポート',
+            pricing_enterprise_feat6: 'トレーニングとオンボーディング',
+            pricing_enterprise_feat7: 'カスタム機能開発',
+            pricing_enterprise_cta: '見積もりをリクエスト',
+            faq_label: 'よくある質問',
+            faq_q1: 'PipingCADの習得は難しいですか？',
+            faq_a1: 'ほとんどのユーザーは2〜3時間で生産的に作業できます。インターフェースはエンジニアやドラフター向けに設計されており、直感的なパラメータ入力と明確な視覚的フィードバックを提供します。',
+            faq_q2: 'どのファイル形式をエクスポートできますか？',
+            faq_a2: 'PipingCADはDXF（主要なCADシステムと互換性のあるR2000+）、3Dモデル交換用のSTEP、および埋め込みQRコード付きのPDF生産レポートをエクスポートします。',
+            faq_q3: '計算の精度はどのくらいですか？',
+            faq_a3: '解析幾何学ソルバーはミクロン精度を達成します。近似法とは異なり、当社の計算は正確な数学的解に基づいています。',
+            faq_q4: '既存のCADソフトウェアと統合できますか？',
+            faq_a4: 'はい！PipingCADはインストールされているCADソフトウェアを自動検出し、図面を直接CAD空間にプッシュできます。手動でのインポート/エクスポート手順は不要です。',
+            contact_label: '始める',
+            contact_subtitle: '今すぐ無料トライアルを開始するか、パーソナライズされたデモについてお問い合わせください。',
+            contact_name_label: '氏名 *',
+            contact_name_placeholder: '山田太郎',
+            contact_email_label: '仕事用メール *',
+            contact_email_placeholder: 'yamada@company.jp',
+            contact_company_label: '会社名',
+            contact_company_placeholder: '御社名',
+            contact_interest_label: '興味があるもの...',
+            contact_interest_trial: '無料トライアル',
+            contact_interest_professional: 'プロフェッショナルライセンス',
+            contact_interest_enterprise: 'エンタープライズ見積もり',
+            contact_interest_demo: 'ライブデモ',
+            contact_interest_question: '一般的な質問',
+            contact_message_label: 'メッセージ',
+            contact_message_placeholder: 'プロジェクトについて教えてください...',
+            contact_submit: 'メッセージを送信',
+            footer_tagline: '精密製造のための産業用配管エンジン。パラメータから生産まで数秒。',
+            pdf_title: 'PDF生産レポート + QRコード',
+            pdf_placeholder: 'ここにPDFレポートのスクリーンショットを挿入',
+            pdf_placeholder_sub: '推奨: 1200x900px PNG、レポートプレビュー表示',
+            pdf_inside_title: '各レポートの内容',
+            pdf_feat_1: '寸法入り3Dレンダリング',
+            pdf_feat_2: '注釈付き展開図プレビュー',
+            pdf_feat_3: '数量付き切断リスト',
+            pdf_feat_4: 'QRトレーサビリティコード - スキャンですべてのデータにアクセス',
+            pdf_feat_5: '工程指示と溶接仕様',
+            pdf_caption: '任意のDXFのQRコードをスキャンして、完全な生産書類に即座にアクセス。ソフトウェアは不要です。',
+            tech_label: '産業用機能',
+            tech_title: '見逃せない本番対応機能',
+            tech_subtitle: 'CNCコードからコストレポートまで——すべての機能は実際の工場ワークフローのために設計されています。',
+            tech_1_title: 'CNC Gコード出力',
+            tech_1_desc: 'Fanuc、Amada、Trumpfコントローラーを完全サポート。工具経路最適化、送り速度、多層ネスティングを備えた本番用Gコード。後処理不要。',
+            tech_2_title: '完全な原価計算エンジン',
+            tech_2_desc: '明細付き見積もり: 材料費、レーザー切断、穴あけ、曲げ、溶接、利益率、消費税。3Dスクリーンショット付きのPDF請求書を自動生成。',
+            tech_3_title: 'PDF生産レポート + QRコード',
+            tech_3_desc: '単なる部品表ではなく、3Dレンダリング、展開図プレビュー、切断リスト、QRトレーサビリティコードを含む完全なジョブ書類。',
+            tech_4_title: 'マルチ戦略バッチ処理',
+            tech_4_desc: '優先度レベル、自動再試行、チェックポイント再開機能を備えたSQLite永続タスクキュー。夜間に数百の部品を処理。',
+            tech_5_title: '規格データベース',
+            tech_5_desc: '内蔵ASME/EN配管規格、フランジ規格（PN16、WN、SO、BL、PL）、エルボ/ティー寸法表。規格を調べる必要はありません。',
+            footer_product: '製品',
+            footer_features: '機能',
+            footer_pricing: '価格',
+            footer_resources: 'リソース',
+            footer_faq: 'よくある質問',
+            footer_support: 'サポート',
+            footer_contact_label: 'お問い合わせ',
+            footer_privacy: 'プライバシーポリシー',
+            footer_terms: '利用規約',
+        },
+    };
+
+    // ==========================================
+    // LANGUAGE SWITCHER
+    // ==========================================
+    function setLanguage(lang) {
+        const t = window.translations[lang] || window.translations.en;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (t[key]) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.placeholder = t[key];
+                } else if (el.tagName === 'OPTION') {
+                    el.textContent = t[key];
+                } else {
+                    el.innerHTML = t[key];
+                }
+            }
+        });
+        document.getElementById('langLabel').textContent = lang.toUpperCase();
+        document.querySelectorAll('.lang-dropdown button').forEach(b => {
+            b.classList.toggle('active-lang', b.getAttribute('data-lang') === lang);
+        });
+        localStorage.setItem('pipingcad_lang', lang);
+    }
+
+    // Language switcher UI
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedLang = localStorage.getItem('pipingcad_lang') || 'en';
+        setLanguage(savedLang);
+
+        const langSwitcher = document.getElementById('langSwitcher');
+        const langCurrent = document.getElementById('langCurrent');
+        const langDropdown = document.getElementById('langDropdown');
+
+        langCurrent.addEventListener('click', function(e) {
+            e.stopPropagation();
+            langSwitcher.classList.toggle('open');
+        });
+
+        langDropdown.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                setLanguage(this.getAttribute('data-lang'));
+                langSwitcher.classList.remove('open');
+            });
+        });
+
+        document.addEventListener('click', function() {
+            langSwitcher.classList.remove('open');
+        });
+
+        // Scroll reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.classList.toggle('open');
+            });
+        });
+
+        // Hamburger menu
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+
+        // Nav link close menu
+        document.querySelectorAll('.nav-links a').forEach(a => {
+            a.addEventListener('click', function() {
+                document.getElementById('navLinks').classList.remove('open');
+            });
+        });
+
+        // ==========================================
+        // BEND DEMO — Premium Discrete Slider
+        // ==========================================
+        const bendRange = document.getElementById('bend-range');
+        if (bendRange) {
+            const img3d = document.getElementById('demo-img-3d');
+            const imgFlat = document.getElementById('demo-img-flat');
+            const nums = document.querySelectorAll('.demo-bend-nums span');
+            const trackFill = document.getElementById('bendTrackFill');
+            const dots = document.querySelectorAll('.bend-dot');
+            const thumb = document.getElementById('bendThumb');
+            const trackWrap = document.getElementById('bendTrackWrap');
+            const values = [3,4,5,6,7,8];
+
+            // Preload images
+            for (let s = 3; s <= 8; s++) {
+                new Image().src = s + 'a.png';
+                new Image().src = s + 'b.png';
+            }
+
+            function pct(seg) { return ((seg - 3) / (8 - 3)) * 100; }
+
+            function updateVisuals(seg) {
+                // Images
+                img3d.src = seg + 'a.png';
+                imgFlat.src = seg + 'b.png';
+
+                // Fill height
+                const trackH = trackWrap.offsetHeight;
+                const available = trackH - 48; // 24px top + 24px bottom
+                trackFill.style.height = Math.max(0, (seg - 3) / 5 * available) + 'px';
+
+                // Thumb position
+                thumb.style.bottom = (24 + (seg - 3) / 5 * available) + 'px';
+
+                // Dots
+                dots.forEach(d => {
+                    const v = parseInt(d.dataset.val);
+                    d.classList.toggle('active', v === seg);
+                    d.classList.toggle('passed', v < seg);
+                });
+
+                // Numbers
+                nums.forEach(el => {
+                    el.classList.toggle('active', parseInt(el.textContent) === seg);
+                });
+            }
+
+            // Click on dots
+            dots.forEach(d => {
+                d.addEventListener('click', function() {
+                    dismissHint();
+                    const v = parseInt(this.dataset.val);
+                    bendRange.value = v;
+                    updateVisuals(v);
+                });
+            });
+
+            // Click on numbers
+            nums.forEach(el => {
+                el.addEventListener('click', function() {
+                    dismissHint();
+                    const v = parseInt(this.textContent);
+                    bendRange.value = v;
+                    updateVisuals(v);
+                });
+            });
+
+            // Range input drag
+            bendRange.addEventListener('input', function() {
+                dismissHint();
+                updateVisuals(parseInt(this.value));
+            });
+
+            // Resize the hidden input to cover the track area
+            function resizeSlider() {
+                const h = trackWrap.offsetHeight;
+                if (h > 0) {
+                    bendRange.style.width = Math.max(h, 200) + 'px';
+                }
+            }
+
+            // Init
+            let hintActive = true;
+            const hintSpan = document.querySelector('.demo-bend-nums span.active');
+            if (hintSpan) {
+                hintSpan.textContent = 'Try this \u2192';
+                hintSpan.classList.add('hint-glow');
+            }
+            setTimeout(function() {
+                resizeSlider();
+                updateVisuals(5);
+                if (hintActive) {
+                    const s = document.querySelector('.demo-bend-nums span.active');
+                    if (s) {
+                        s.textContent = 'Try this \u2192';
+                        s.classList.add('hint-glow');
+                    }
+                }
+            }, 100);
+
+            function dismissHint() {
+                if (!hintActive) return;
+                hintActive = false;
+                const s = document.querySelector('.demo-bend-nums span.active');
+                if (s) {
+                    s.textContent = '5';
+                    s.classList.remove('hint-glow');
+                }
+            }
+
+            window.addEventListener('resize', function() {
+                resizeSlider();
+                updateVisuals(parseInt(bendRange.value));
+            });
+        }
+
+        // ==========================================
+        // CARD FLIP + IMAGE LOAD
+        // ==========================================
+        document.querySelectorAll('.eye-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const flipper = this.closest('.flipper');
+                if (flipper) {
+                    const back = flipper.querySelector('.flipper-back');
+                    const fitId = back ? back.getAttribute('data-fit') : null;
+                    // Load image on first flip
+                    if (fitId && !back.querySelector('img')) {
+                        const img = document.createElement('img');
+                        img.src = 'fit_' + fitId + '.png';
+                        img.alt = 'Fitting preview';
+                        img.loading = 'lazy';
+                        img.onerror = function() { this.style.display = 'none'; };
+                        // Hide placeholder SVG
+                        const svg = back.querySelector('svg');
+                        if (svg) svg.style.display = 'none';
+                        back.prepend(img);
+                    }
+                    flipper.classList.add('flipped');
+                }
+            });
+        });
+
+        document.querySelectorAll('.flipper-back').forEach(back => {
+            back.addEventListener('click', function() {
+                const flipper = this.closest('.flipper');
+                if (flipper) {
+                    flipper.classList.remove('flipped');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
